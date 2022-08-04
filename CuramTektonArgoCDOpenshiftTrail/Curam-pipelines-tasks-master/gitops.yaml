@@ -1,0 +1,205 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-dev-deploy-gitops
+  annotations:
+    description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/vcs-uri: https://github.com/IBM/ibm-garage-tekton-tasks
+    app.openshift.io/vcs-ref: master
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    - name: app-name
+      default: "spm"
+    - name: version
+      default: ""
+    - name: source-dir
+      default: /source
+    - name: subdir
+      default: "spmeight-argocd"
+    - name: parentdir
+      default: "dev-deploy"
+    - name: helm-url
+      default: ""
+    - name: git-pr
+      default: "false"
+    - name: tools-image
+      default: quay.io/julescheindjou/pipeline_github_cli:v4.0 (please update image path)
+  volumes:
+    - name: source
+      emptyDir: {}
+    - name: git-token-curam (please update )
+      secret:
+        secretName: git-token-curam
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+      
+  steps:
+    - name: gitops
+      image: $(params.tools-image)
+      workingDir: $(params.source-dir)
+      volumeMounts:
+      - name: git-token-curam
+        mountPath: $(params.source-dir)/token
+
+      env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOME
+          value: /home/devops
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+        - name: GIT_PARENT_DIR
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: parentdir
+              optional: true
+        - name: GIT_PROTOCOL
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: protocol
+              optional: true
+        - name: GIT_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: host
+              optional: true
+        - name: GIT_ORG
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: org
+              optional: true
+        - name: GIT_REPO
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: repo
+              optional: true
+        - name: GIT_BRANCH
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: branch
+              optional: true
+      script: |
+          #!/usr/bin/env bash
+          set -ex
+          APP_NAME="$(params.app-name)"
+          VERSION="$(params.version)"
+          SUBDIR="$(params.subdir)"
+          if [[ -z "${SUBDIR}" ]]; then
+            SUBDIR="${APP_NAME}"
+          fi
+          if [[ -n "$(params.parentdir)" ]]; then
+            PARENT_DIR="$(params.parentdir)"
+          elif [[ -n "${GIT_PARENT_DIR_SERVICES}" ]] && [[ "${GIT_PARENT_DIR_SERVICES}" = "bash -c"* ]]; then
+            PARENT_DIR=$(eval $GIT_PARENT_DIR_SERVICES | tail -n 1)
+          elif [[ -n "${GIT_PARENT_DIR_SERVICES}" ]]; then
+            PARENT_DIR="${GIT_PARENT_DIR_SERVICES}"
+          elif [[ -n "${GIT_PARENT_DIR}" ]] && [[ "${GIT_PARENT_DIR}" = "bash -c"* ]]; then
+            PARENT_DIR=$(eval $GIT_PARENT_DIR | tail -n 1)
+          elif [[ -n "${GIT_PARENT_DIR}" ]]; then
+            PARENT_DIR="${GIT_PARENT_DIR}"
+          else
+            PARENT_DIR="."
+          fi
+          SUBDIR="${PARENT_DIR}/${SUBDIR}/${APP_NAME}"
+          
+          PROTOCOL="${GIT_PROTOCOL}"
+          if [[ -z "${PROTOCOL}" ]]; then
+            PROTOCOL="https"
+          fi
+         
+          
+          set +x
+          if [[ -n "${GIT_USERNAME}" ]]; then
+            GIT_AUTH_USER="${GIT_USERNAME}"
+            GIT_AUTH_PWD="${GIT_PASSWORD}"
+          else
+            echo "Credentials for GitOps repo not set in secret gitops-cd-secret or git-credentials"
+            exit 1
+          fi
+          set -x
+          BRANCH_CMD=""
+          if [[ -n "${GIT_BRANCH}" ]]; then
+            BRANCH_CMD="-b ${GIT_BRANCH}"
+          fi
+          git config --global user.email "michael.wallack@ibm.com"
+          git config --global user.name "michael.wallack"
+          
+          set +x
+          
+         
+          
+         
+          git clone ${BRANCH_CMD} https://${GIT_AUTH_USER}:${GIT_AUTH_PWD}@github.ibm.com/Michael-Wallach/Gitops.git
+          
+  
+        
+        
+          set -x
+      
+
+          cd Gitops
+        
+         
+          if [[ -f "${SUBDIR}/Chart.yaml" && -f "${SUBDIR}/Chart.yaml" ]]; then
+            echo "Requirements before update"
+            cat "${SUBDIR}/Chart.yaml"
+
+            # update helm package version and Image tag version"
+            echo ${VERSION}
+             sed -i "s/0\.0\.[0-9.]*/${VERSION}/" ${SUBDIR}/Chart.yaml
+             sed -i "s/0\.0\.[0-9.]*/${VERSION}/" ${SUBDIR}/values.yaml
+
+           
+            echo "Requirements after update"
+            cat "${SUBDIR}/Chart.yaml"
+
+          elif [[ -n "${HELM_URL}" ]]; then
+            if [[ ! -z ${SUBDIR} ]]; then
+              files=$(ls ${SUBDIR} | wc -l)
+              if [[ ${files} -gt 1 && ${files} -lt 3 ]]; then
+                echo "${SUBDIR} is present but files are not existing"
+                
+              fi
+            fi
+          fi
+          if [[ $(git status -s | wc -l) -eq 0 ]]; then
+            echo "No changes"
+            exit 0
+          fi
+          git add "${SUBDIR}/"
+          git commit -m "Updates ${APP_NAME} to ${VERSION}"
+          git push -v
+
+
+         
+
+
+          
+
+          
+
+           
+           

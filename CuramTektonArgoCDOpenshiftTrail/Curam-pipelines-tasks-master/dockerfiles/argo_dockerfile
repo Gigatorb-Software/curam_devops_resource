@@ -1,0 +1,9 @@
+FROM quay.io/ibmgaragecloud/ibmcloud-dev:v2.0.4
+USER root
+RUN wget https://github.com/argoproj/argo-cd/releases/download/v2.2.2/argocd-linux-amd64 -O argocd && \
+    chmod +x argocd && \
+    mv argocd /usr/local/bin
+RUN chgrp -R 0 /usr/local/bin && \
+    chmod -R g=u /usr/local/bin
+USER 1001
+RUN oc 

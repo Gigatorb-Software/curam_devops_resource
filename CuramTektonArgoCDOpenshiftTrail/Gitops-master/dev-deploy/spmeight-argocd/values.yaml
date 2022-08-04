@@ -1,0 +1,13 @@
+global: {}
+argocd-config:
+  repoUrl: "http://gogs.tools:3000/toolkit/gitops.git"
+  project: "openshift-gitops"
+  applicationTargets:
+  - targetRevision: master
+    createNamespace: false
+    targetNamespace: "jules-project"
+    applications:
+     - name: "spm"
+       path: "dev-deploy/spmeight-argocd/spm"
+       type: helm
+     

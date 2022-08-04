@@ -1,0 +1,99 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-prod-pod-shutdown
+  annotations:
+    description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/vcs-uri: https://github.com/IBM/ibm-garage-tekton-tasks
+    app.openshift.io/vcs-ref: master
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    - name: source-dir
+      default: /source
+    - name: tools-image
+      default: quay.io/julescheindjou/argocd-cli:v6.0 (please update )
+  volumes:
+    - name: source
+      emptyDir: {}
+
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+  steps:
+    - name: gitops
+      image: $(params.tools-image)
+      workingDir: $(params.source-dir)
+      env:
+        - name: HOME
+          value: /home/devops
+        - name: ARGOCD_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: gitops-cd-uat-secret (please update)
+              key: username
+              optional: true
+        - name: ARGOCD_PASSWORD_CD
+          valueFrom:
+            secretKeyRef:
+              name: gitops-cd-uat-secret  (please update)
+              key: password
+              optional: true
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: prod-token (please create prod secret)
+              key: token
+              optional: true
+        
+        
+      script: |
+          #!/usr/bin/env bash
+          
+
+          argocd login --insecure << Argocd  URL>>  --username ${ARGOCD_USERNAME}   --password ${ARGOCD_PASSWORD_CD}
+        
+
+         
+          
+          
+
+          argocd  app set << production project namespace>>  --sync-option Prune=false --sync-policy none
+
+         
+
+          oc login --token=${TOKEN}  --server=<< OCP cluster url>>
+
+          oc get deploy -n << production project namespace>> 1>&2
+          if  [ $? -eq 0 ]; then
+            
+          echo "There is not deployment in << production project namespace>>project namespace"
+           exit 0 
+          else
+           oc scale deploy/curam-apps-curam-consumer -n << production project namespace>>--replicas=0
+          oc scale deploy/curam-apps-curam-producer -n << production project namespace>>--replicas=0
+          oc scale deploy/curam-mqserver-curam -n << production project namespace>>--replicas=0
+          oc scale deploy/curam-xmlserver  -n << production project namespace>>--replicas=0
+          oc scale deploy/curam-web -n << production project namespace>> --replicas=0
+          
+              
+           fi
+         
+          
+
+          
+          
+          
+          
+          
+          
+       
+         
+
+
+
+        #As an alternative, you can use the --kubeconfig option of the oc command.
+          #oc --kubeconfig /home/user/auth/kubeconfig get nodes

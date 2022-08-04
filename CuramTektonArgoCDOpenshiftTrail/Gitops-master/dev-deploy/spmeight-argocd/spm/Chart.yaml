@@ -1,0 +1,9 @@
+apiVersion: v2
+version: 0.1.0
+name: spm
+dependencies:
+  - name: spm
+    version: 0.0.36
+    repository: >-
+      http://artifactory-artifactory.tools:8082/artifactory/generic-local/jules-project
+description: Chart to configure ArgoCD with the spm project and its applications

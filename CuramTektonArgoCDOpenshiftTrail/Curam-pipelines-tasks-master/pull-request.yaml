@@ -1,0 +1,107 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-pull-request
+  annotations:
+    description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/vcs-uri: https://github.com/IBM/ibm-garage-tekton-tasks
+    app.openshift.io/vcs-ref: master
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    - name: git-url
+      description: The url for the git repository
+      default: https://github.ibm.com/Michael-Wallach/SPMEight.git (please update if it is different)
+    - name: git-revision
+      description: The git revision (branch, tag, or sha) that should be built
+      default: ""
+    - name: source-dir
+      default: /source
+    - name: directory-name
+      default: "clone"
+    - name: tools-image
+      default: quay.io/julescheindjou/pipeline_github_cli:v4.0 (please update)
+  volumes:
+    - name: source
+      emptyDir: {}
+    - name: git-token-curam (please update)
+      secret:
+        secretName: git-token-curam (please update)
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+      
+  steps:
+    - name: pull-request
+      image: $(params.tools-image)
+      workingDir: $(params.source-dir)
+      volumeMounts:
+      - name: git-token-curam
+        mountPath: $(params.source-dir)/token
+
+      env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOME
+          value: /home/devops
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+      script: |
+          #!/usr/bin/env bash
+          set -ex
+          
+          cd $(params.source-dir)
+          ls
+          cat token/token.txt
+          gh auth login --hostname github.ibm.com --with-token < token/token.txt
+          gh auth status        
+         
+          git config --global user.email "michael.wallack@ibm.com" (please update)
+          git config --global user.name "michael.wallack" (please update)
+        
+          
+        
+          set +x
+          if [[ -n "${GIT_USERNAME}" ]] && [[ -n "${GIT_PASSWORD}" ]]; then
+      
+            git clone "$(echo $(params.git-url) | awk -F '://' '{print $1}')://${GIT_USERNAME}:${GIT_PASSWORD}@$(echo $(params.git-url) | awk -F '://' '{print $2}')" $(params.directory-name)
+          else
+            set -x
+            git clone $(params.git-url) $(params.directory-name)
+          fi
+          set -x
+          cd $(params.directory-name)
+          git checkout $(params.git-revision)
+        
+      
+            
+            ## create the pull request"
+            
+            pull=$(gh pr create --title "PR to merge $(params.git-revision) to master branch" --body "Merge release branch to master" --base "main" --head "$(params.git-revision)" -a Michael-Wallach) (please update user name)
+            echo $pull
+            Git_api_url=$(echo $pull | grep  'https://github.ibm.com' | sed 's/https:\/\/github.ibm.com/repos/g' | sed 's/pull/pulls/g')
+            
+            echo "$Git_api_url"
+
+            pullrequest_state=$(gh api --hostname github.ibm.com $Git_api_url | jq .state | tr -d '"' )
+
+            echo " pull request is still  $pullrequest_state"
+            
+            
+              
+        

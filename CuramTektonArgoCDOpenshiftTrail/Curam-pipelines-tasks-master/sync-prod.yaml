@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-sync-prod
+  annotations:
+    
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    
+    - name: source-dir
+      default: /source
+    - name: tools-image
+      default: quay.io/julescheindjou/argocd-cli:v6.0 (please update)
+  volumes:
+    - name: source
+      emptyDir: {}
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+  steps:
+    - name: gitops
+      image: $(params.tools-image)
+      workingDir: $(params.source-dir)
+      env:
+        - name: HOME
+          value: /home/devops
+        - name: ARGOCD_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: gitops-cd-prod-secret (create prod secret and update)
+              key: username
+              optional: true
+        - name: ARGOCD_PASSWORD_CD
+          valueFrom:
+            secretKeyRef:
+              name: gitops-cd-prod-secret (create prod secret and update)
+              key: password
+              optional: true
+        
+      script: |
+          #!/usr/bin/env bash
+          
+          argocd login --insecure << argocd url>> --username ${ARGOCD_USERNAME}   --password ${ARGOCD_PASSWORD_CD}
+
+          argocd  app set prod  --sync-option Prune=false --sync-policy auto
+
+
+
+          

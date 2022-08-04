@@ -1,0 +1,84 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: gitops-promote-prod
+spec:
+  tasks:
+    - name: ibm-prod-pod-shutdown
+      params:
+        - name: source-dir
+          value: /source
+        - name: tools-image
+          value: 'quay.io/julescheindjou/argocd-cli:v6.0' (please update this path)
+      runAfter:
+        - ibm-copy-image
+      taskRef:
+        kind: Task
+        name: ibm-prod-pod-shutdown
+    - name: ibm-update-prod-database
+      params:
+        - name: src-environment
+          value: sit-deploy
+        - name: dest-environment
+          value: prod
+        - name: app-path
+          value: spm
+        - name: subdir
+          value: spmeight-argocd
+        - name: source-dir
+          value: /source
+        - name: tools-image
+          value: 'quay.io/julescheindjou/pipeline_image:v2.0' (please update this path)
+      runAfter:
+        - ibm-prod-pod-shutdown
+      taskRef:
+        kind: Task
+        name: ibm-update-prod-database
+    - name: ibm-sync-prod
+      params:
+        - name: source-dir
+          value: /source
+        - name: tools-image
+          value: 'quay.io/julescheindjou/argocd-cli:v6.0' (please update this path)
+      runAfter:
+        - ibm-update-prod-database
+      taskRef:
+        kind: Task
+        name: ibm-sync-prod
+    - name: ibm-copy-image
+      params:
+        - name: dest-environment
+          value: prod
+        - name: app-path
+          value: spm
+        - name: subdir
+          value: spmeight-argocd
+        - name: source-dir
+          value: /source
+        - name: image-from
+          value: 'image-registry.openshift-image-registry.svc:5000/jules-project' (please update this path)
+        - name: image-to
+          value: >-
+            default-route-openshift-image-registry.prod-2022-ed1a03814f096c1e0c48d0de41f5ae2b-0000.ca-tor.containers.appdomain.cloud/prod (please update this path)
+        - name: SKOPEO_IMAGE
+          value: 'quay.io/containers/skopeo:v1.1.0'
+      taskRef:
+        kind: Task
+        name: ibm-copy-image
+    - name: ibm-pull-request
+      params:
+        - name: git-url
+          value: 'https://github.ibm.com/Michael-Wallach/SPMEight.git' (please update this path)
+        - name: git-revision
+          value: Release1
+        - name: source-dir
+          value: /source
+        - name: directory-name
+          value: clone
+        - name: tools-image
+          value: 'quay.io/julescheindjou/pipeline_github_cli:v4.0' (please update this path)
+      runAfter:
+        - ibm-sync-prod
+      taskRef:
+        kind: Task
+        name: ibm-pull-request

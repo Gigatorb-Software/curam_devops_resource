@@ -1,0 +1,28 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  selfLink: >-
+    /apis/triggers.tekton.dev/v1alpha1/namespaces/<< update  pipeline project namespace>>/triggertemplates/<< update the pipeline name>>
+  name: spmeight (please update this pipeline name)
+  labels:
+    app: spmeight  (please update this pipeline name)
+spec:
+  params:
+    - description: The git revision
+      name: gitrevision
+    - description: The git repository url
+      name: gitrepositoryurl
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: spmeight- (please use the pipeline name)
+      spec:
+        params:
+          - name: git-url
+            value: $(tt.params.gitrepositoryurl)
+          - name: git-revision
+            value: $(tt.params.gitrevision)
+        pipelineRef:
+          name: spmeight ( please update the pipeline name)
+        timeout: 1h30m0s

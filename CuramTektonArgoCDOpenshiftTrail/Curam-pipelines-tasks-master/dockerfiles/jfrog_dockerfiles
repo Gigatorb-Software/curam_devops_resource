@@ -1,0 +1,5 @@
+FROM releases-docker.jfrog.io/jfrog/jfrog-cli-v2-jf:latest
+USER root
+RUN chmod 777 /home
+RUN chown -R 1001:1001 /home
+USER 1001

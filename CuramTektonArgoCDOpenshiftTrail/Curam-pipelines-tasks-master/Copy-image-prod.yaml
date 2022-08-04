@@ -1,0 +1,185 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  annotations:
+    app.openshift.io/description: >-
+      Tags the git repository and releases the intermediate container image with
+      the version tag
+    app.openshift.io/vcs-ref: master
+    app.openshift.io/vcs-uri: 'https://github.com/IBM/ibm-garage-tekton-tasks'
+    description: >-
+      Tags the git repository and releases the intermediate container image with
+      the version tag
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"tekton.dev/v1beta1","kind":"Task","metadata":{"annotations":{"app.openshift.io/description":"Tags
+      the git repository and releases the intermediate container image with the
+      version
+      tag","app.openshift.io/vcs-ref":"master","app.openshift.io/vcs-uri":"https://github.com/IBM/ibm-garage-tekton-tasks","description":"Tags
+      the git repository and releases the intermediate container image with the
+      version
+      tag"},"labels":{"version":"0.0.0"},"name":"ibm-copy-image","namespace":"jules-project"},"spec":{"params":[{"default":"prod","name":"dest-environment"},{"default":"spm","name":"app-path"},{"default":"spmeight-argocd","name":"subdir"},{"default":"/source","name":"source-dir"},{"default":"image-registry.openshift-image-registry.svc:5000/jules-project","name":"image-from"},{"default":"default-route-openshift-image-registry.prod-2022-ed1a03814f096c1e0c48d0de41f5ae2b-0000.ca-tor.containers.appdomain.cloud/prod","name":"image-to"},{"default":"quay.io/containers/skopeo:v1.1.0","name":"SKOPEO_IMAGE"}],"stepTemplate":{"volumeMounts":[{"mountPath":"$(params.source-dir)","name":"source"}]},"steps":[{"env":[{"name":"GIT_PASSWORD","valueFrom":{"secretKeyRef":{"key":"password","name":"git-credentials","optional":true}}},{"name":"GIT_USERNAME","valueFrom":{"secretKeyRef":{"key":"username","name":"git-credentials","optional":true}}}],"image":"quay.io/ibmgaragecloud/alpine-git","name":"git-clone","script":"set
+      +x\n ## get the image version\n\n  GIT_AUTH_USER=\"${GIT_USERNAME}\"\n 
+      GIT_AUTH_PWD=\"${GIT_PASSWORD}\"\n \n\n   git clone -b prod
+      https://${GIT_AUTH_USER}:${GIT_AUTH_PWD}@github.ibm.com/Michael-Wallach/Gitops.git\n 
+      \n","workingDir":"$(params.source-dir)"},{"env":[{"name":"REGISTRY_USER","valueFrom":{"secretKeyRef":{"key":"REGISTRY_USER","name":"dev-registry-access","optional":true}}},{"name":"DEV_REGISTRY_PASSWORD","valueFrom":{"secretKeyRef":{"key":"REGISTRY_PASSWORD","name":"dev-registry-access","optional":true}}},{"name":"REGISTRY_USER","valueFrom":{"secretKeyRef":{"key":"REGISTRY_USER","name":"prod-registry-access","optional":true}}},{"name":"PROD_REGISTRY_PASSWORD","valueFrom":{"secretKeyRef":{"key":"REGISTRY_PASSWORD","name":"prod-registry-access","optional":true}}}],"image":"$(params.SKOPEO_IMAGE)","name":"image-tag","script":"#!/usr/bin/env
+      bash\n \n  \n    cd Gitops\n    VERSION=\"$(grep 'version:'
+      ./$(params.dest-environment)/$(params.subdir)/$(params.app-path)/Chart.yaml
+      | awk 'NR==2{print $2}')\"\n    echo $VERSION\n    cd ..\n\n 
+      IMAGE_FROM=\"$(params.image-from)\"\n  IMAGE_TO=\"$(params.image-to)\"\n  
+      printenv\n\n \n   skopeo copy
+      --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD}
+      --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD}
+      docker://${IMAGE_FROM}/batch:${VERSION}
+      docker://${IMAGE_TO}/batch:${VERSION}\n   \n   skopeo copy
+      --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD}
+      --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD}
+      docker://${IMAGE_FROM}/curam:${VERSION}
+      docker://${IMAGE_TO}/curam:${VERSION}\n   \n   skopeo copy
+      --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD}
+      --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD}
+      docker://${IMAGE_FROM}/httpd:${VERSION}
+      docker://${IMAGE_TO}/httpd:${VERSION}\n   \n   skopeo copy
+      --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD}
+      --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD}
+      docker://${IMAGE_FROM}/servercode:${VERSION}
+      docker://${IMAGE_TO}/servercode:${VERSION}\n   \n   skopeo copy
+      --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD}
+      --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD}
+      docker://${IMAGE_FROM}/utilities:${VERSION}
+      docker://${IMAGE_TO}/utilities:${VERSION}\n  \n   skopeo copy
+      --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD}
+      --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD}
+      docker://${IMAGE_FROM}/xmlserver:${VERSION}
+      docker://${IMAGE_TO}/xmlserver:${VERSION}\n\n   \n   \n  
+      \n","securityContext":{"privileged":true},"volumeMounts":[{"mountPath":"/var/lib/containers","name":"varlibcontainers"}],"workingDir":"$(params.source-dir)"}],"volumes":[{"emptyDir":{},"name":"varlibcontainers"},{"emptyDir":{},"name":"source"}]}}
+  selfLink: /apis/tekton.dev/v1beta1/namespaces/jules-project/tasks/ibm-copy-image
+  
+  name: ibm-copy-image
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    - default: prod
+      name: dest-environment
+      type: string
+    - default: spm
+      name: app-path
+      type: string
+    - default: spmeight-argocd
+      name: subdir
+      type: string
+    - default: /source
+      name: source-dir
+      type: string
+    - default: 'image-registry.openshift-image-registry.svc:5000/jules-project'(please update according to your env)
+      name: image-from
+      type: string
+    - default: >-
+        default-route-openshift-image-registry.prod-2022-ed1a03814f096c1e0c48d0de41f5ae2b-0000.ca-tor.containers.appdomain.cloud/prod (please update according to your env)
+      name: image-to
+      type: string
+    - default: 'quay.io/containers/skopeo:v1.1.0'
+      name: SKOPEO_IMAGE
+      type: string
+  stepTemplate:
+    name: ''
+    resources: {}
+    volumeMounts:
+      - mountPath: $(params.source-dir)
+        name: source
+  steps:
+    - env:
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: git-credentials
+              optional: true
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: git-credentials
+              optional: true
+      image: quay.io/ibmgaragecloud/alpine-git
+      name: git-clone
+      resources: {}
+      script: |
+        set +x
+         ## get the image version
+
+          GIT_AUTH_USER="${GIT_USERNAME}"
+          GIT_AUTH_PWD="${GIT_PASSWORD}"
+         
+
+           git clone -b prod https://${GIT_AUTH_USER}:${GIT_AUTH_PWD}@github.ibm.com/Michael-Wallach/Gitops.git (please update according to your env)
+          
+      workingDir: $(params.source-dir)
+    - env:
+        - name: REGISTRY_USER
+          valueFrom:
+            secretKeyRef:
+              key: REGISTRY_USER
+              name: dev-registry-access
+              optional: true
+        - name: DEV_REGISTRY_PASSWORD 
+          valueFrom:
+            secretKeyRef:
+              key: REGISTRY_PASSWORD
+              name: dev-registry-access
+              optional: true
+        - name: REGISTRY_USER
+          valueFrom:
+            secretKeyRef:
+              key: REGISTRY_USER
+              name: prod-registry-access
+              optional: true
+        - name: PROD_REGISTRY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: REGISTRY_PASSWORD
+              name: prod-registry-access
+              optional: true
+      image: $(params.SKOPEO_IMAGE)
+      name: image-tag
+      resources: {}
+      script: |
+        #!/usr/bin/env bash
+         
+          
+            cd Gitops
+            VERSION="$(grep 'version:' ./$(params.dest-environment)/$(params.subdir)/$(params.app-path)/Chart.yaml | awk 'NR==2{print $2}')"
+            echo $VERSION
+            cd ..
+
+          IMAGE_FROM="$(params.image-from)"
+          IMAGE_TO="$(params.image-to)"
+           printenv
+
+         
+           skopeo copy --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD} --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD} docker://${IMAGE_FROM}/batch:${VERSION} docker://${IMAGE_TO}/batch:${VERSION}
+           
+           skopeo copy --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD} --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD} docker://${IMAGE_FROM}/curam:${VERSION} docker://${IMAGE_TO}/curam:${VERSION}
+           
+           skopeo copy --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD} --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD} docker://${IMAGE_FROM}/httpd:${VERSION} docker://${IMAGE_TO}/httpd:${VERSION}
+           
+           skopeo copy --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD} --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD} docker://${IMAGE_FROM}/servercode:${VERSION} docker://${IMAGE_TO}/servercode:${VERSION}
+           
+           skopeo copy --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD} --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD} docker://${IMAGE_FROM}/utilities:${VERSION} docker://${IMAGE_TO}/utilities:${VERSION}
+          
+           skopeo copy --src-creds=${REGISTRY_USER}:${DEV_REGISTRY_PASSWORD} --dest-creds=${REGISTRY_USER}:${PROD_REGISTRY_PASSWORD} docker://${IMAGE_FROM}/xmlserver:${VERSION} docker://${IMAGE_TO}/xmlserver:${VERSION}
+
+           
+           
+           
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      workingDir: $(params.source-dir)
+  volumes:
+    - emptyDir: {}
+      name: varlibcontainers
+    - emptyDir: {}
+      name: source

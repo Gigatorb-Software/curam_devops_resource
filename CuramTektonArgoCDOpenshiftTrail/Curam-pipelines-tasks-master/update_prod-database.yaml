@@ -1,0 +1,170 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-update-prod-database
+spec:
+  params: 
+    - name: src-environment
+      default: "sit-deploy"
+    - name: dest-environment
+      default: "prod"
+    - name: app-path
+      default: "spm"
+    - name: subdir
+      default: "spmeight-argocd"
+    - name: source-dir
+      default: /source
+    - name: tools-image
+      default: quay.io/julescheindjou/pipeline_image:v2.0 (please update image path)
+  volumes:
+    - name: source
+      emptyDir: {}
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+  steps:
+    - name: download-artifact-jfrog
+      image: quay.io/julescheindjou/jfrog-cli:v2.0 (please update image path)
+      workingDir: $(params.source-dir)
+      env:
+        - name: ARTIFACTORY_URL
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_URL
+              optional: true
+        - name: ARTIFACTORY_USER
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_USER
+              optional: true
+        - name: ARTIFACTORY_ENCRYPT
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_ENCRYPT
+              optional: true
+        - name: ARTIFACTORY_REPOSITORY_KEY
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_REPOSITORY_KEY
+              optional: true
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+      script: |
+         
+         # retrieve the image tag version deployed in Sit-deploy
+         #!/usr/bin/env bash
+          set -ex
+         printenv
+          
+            GIT_AUTH_USER="${GIT_USERNAME}"
+            GIT_AUTH_PWD="${GIT_PASSWORD}"
+         
+
+          git clone -b prod https://${GIT_AUTH_USER}:${GIT_AUTH_PWD}@github.ibm.com/Michael-Wallach/Gitops.git
+          
+          cd Gitops
+          VERSION="$(grep 'version:' ./$(params.dest-environment)/$(params.subdir)/$(params.app-path)/Chart.yaml | awk 'NR==2{print $2}')"
+           echo $VERSION
+          # download artifact
+          cd ../
+          jf  config add   --interactive=false  --url=${ARTIFACTORY_URL} --user=${ARTIFACTORY_USER} --password=${ARTIFACTORY_ENCRYPT}
+          jf config show
+          jf rt ping 
+ 
+          jf  rt dl  generic-local/curam-development/release.${VERSION}.zip  --recursive=false
+          jf  rt dl  generic-local/curam-development/BuildFiles.zip  --recursive=false
+
+          cd curam-development
+          ls
+       
+    - name: build-artifact
+      image: $(params.tools-image)
+      workingDir: $(params.source-dir)
+      env:
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+      script: |
+        #!/usr/bin/env bash
+
+       
+          GIT_AUTH_USER="${GIT_USERNAME}"
+          GIT_AUTH_PWD="${GIT_PASSWORD}"
+     
+       
+       
+
+        cd Gitops
+        
+        VERSION="$(grep 'version:' ./$(params.dest-environment)/$(params.subdir)/$(params.app-path)/Chart.yaml | awk 'NR==2{print $2}')"
+         echo $VERSION
+        cd ../
+
+        echo $VERSION
+
+        cd curam-development
+        
+
+        unzip release.${VERSION}.zip
+
+        unzip BuildFiles.zip 
+
+          # set environment variables
+          #export SERVER_LOCALE_LIST=en_US,en_GB,en
+          #export LOCALE_LIST=en_US,en_GB,en
+          #export CLIENT_PROJECT_NAME=Curam
+          #export SERVER_MODEL_NAME=Curam
+          #export CURAM_DIR="/source/curam-development"
+          export J2EE_JAR=$CURAM_DIR/BuildFiles/j2ee.jar
+          #export SERVER_DIR=$CURAM_DIR/EJBServer
+          #export CURAMSDEJ=$CURAM_DIR/CuramSDEJ
+          #export CLIENT_DIR=$CURAM_DIR/webclient
+          #export CURAMCDEJ=$CURAM_DIR/CuramCDEJ
+          #export CLIENT_COMPONENT_ORDER=custom,CYSSupervisorWorkspace,CYSSECCommon,YouthServices,IVEEligibility,CCSSECCommon,CCSSupervisorWorkspace,ChildServicesBI,ChildServicesSDM,ChildServices,CFSSSECCommon,CFSSCommon,AssessmentPlanningCareManagementCommon,PlatformConfig,CommonIntake,Intake,ReferralsLite,CPMReferralsLite,PCR,CREOLEProgramRecommendation,SummaryViews,Evidence,DecisionAssistAssessments,AssessmentPlanningCPM,AssessmentPlanning,AssessmentPlanningCommon,CitizenContextViewer,WorkspaceServices,CaseParticipantIndex,ClientAccess,CitizenWorkspaceAdmin,SECAppeals,SocialEnterpriseCollaboration,SECCommon,FundPM,CPMAppealCommon,Appeal,SupervisorAppeals,DecisionAssist,CPM,CPMSample,ProviderServicePlan,DynamicEvidence,CEFWidgets,CMIS,IntelligentEvidenceGathering,IEGAdmin,Datastore,Editors,SupervisorWorkspace,Verification,ServicePlans,sample,CTMInfrastructure,SamplePublicAccess,AdvancedEvidenceSharing,EvidenceBroker,CuramFinancialAdapter,CuramMDAdapter,Advisor,EvidenceSharing,PDC,ValidationManager,SmartNavigator
+          #export SERVER_COMPONENT_ORDER=custom,YouthServices,IVEEligibility,ChildServicesBI,OutcomeManagementSDMContent,InvestigationSDMContent,ChildServicesSDM,ChildServices,CFSSSECCommon,CFSSCommon,PlatformConfig,Appeal,CommonIntake,Intake,ReferralsLite,CPMReferralsLite,PCR,CREOLEProgramRecommendation,SummaryViews,Evidence,DecisionAssistAssessments,AssessmentPlanningCPM,AssessmentPlanning,CitizenContextViewer,WorkspaceServices,CaseParticipantIndex,ClientAccess,SocialEnterpriseCollaboration,CitizenWorkspaceAdmin,FundPM,SupervisorAppeals,DecisionAssist,CPMSample,CPM,ProviderServicePlan,DynamicEvidence,CEFWidgets,CMISInfrastructure,CMIS,IntelligentEvidenceGathering,Datastore,Editors,SupervisorWorkspace,Verification,ServicePlans,sample,CTMInfrastructure,SamplePublicAccess,AdvancedEvidenceSharing,EvidenceBroker,CuramFinancialAdapter,CuramMDAdapter,CREOLEInfrastructure,Advisor,EvidenceSharing,PDC,PFMAppViews,Workflow,ValidationManager,SmartNavigator
+          #export PKG_HOME=$CURAM_DIR/pkg
+          
+          chmod +x SetEnvironment.sh
+          ls
+          . ./SetEnvironment.sh
+
+        printenv
+
+        #create bootstrap for build database 
+
+         cp -v BuildFiles/BootstrapSIT.properties  project/properties/Bootstrap.properties
+
+        export ANT_OPTS="-Xmx1400m -Dcmp.maxmemory=1400m"
+
+        ant -f ./build.xml -Dprp.noninternedstrings=true database prepare.application.data
+
+           
+         
+        
+            
+
+          

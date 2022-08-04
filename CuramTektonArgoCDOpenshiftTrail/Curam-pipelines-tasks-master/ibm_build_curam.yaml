@@ -1,0 +1,385 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-build-tag-push-curam
+  annotations:
+    description: Executes logic to build, tag and push a container image using the intermediate sha tag to the image-url
+    app.openshift.io/description: Executes logic to build, tag and push a container image using the intermediate sha tag to the image-url
+    app.openshift.io/vcs-uri: https://github.com/IBM/ibm-garage-tekton-tasks
+    app.openshift.io/vcs-ref: master
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    - name: git-url
+    - name: git-url-pkg
+    - name: git-revision
+      default: main
+    - name: git-revision-pkg
+      default: master 
+    - name: directory-name
+      default: "pkg"
+    - name: source-dir
+      default: /source
+    - name: image-server
+      default: ""
+    - name: image-namespace
+      default: ""
+    - name: image-repository
+      default: ""
+    - name: image-tag
+      default: ""
+    - name: BUILDER_IMAGE
+      default: quay.io/buildah/stable:v1.15.0
+    - name: DOCKERFILE
+      default: ./Dockerfile
+    - name: CONTEXT
+      default: .
+    - name: TLSVERIFY
+      default: "false"
+    - name: FORMAT
+      default: "docker"
+    - name: STORAGE_DRIVER
+      description: Set buildah storage driver
+      default: overlay
+    - name: image-url-httpserver
+      description: The dev image (use image-release for released image)
+      default: ""
+    - name: image-url-servercode
+      description: The dev image (use image-release for released image)
+      default: ""
+    - name: image-url-batch
+      description: The dev image (use image-release for released image)
+      default: ""
+    - name: image-url-curam
+      description: The dev image (use image-release for released image)
+      default: ""
+    - name: image-url-xmlserver
+      description: The dev image (use image-release for released image)
+      default: ""
+    - name: image-url-utilities
+      description: The dev image (use image-release for released image)
+      default: ""
+
+   
+  results:
+    - name: image-url-xmlserver
+    - name: image-url-curam
+    - name: image-url-batch
+    - name: image-url-servercode
+    - name: image-url-httpserver
+    - name: image-url-utilities
+    
+
+  volumes:
+    - name: varlibcontainers
+      emptyDir: {}
+    - name: source
+      emptyDir: {}
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+  steps:
+    - name: git-clone
+      image: quay.io/ibmgaragecloud/alpine-git
+      env:
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+      script: |
+        set +x
+        if [[ -n "${GIT_USERNAME}" ]] && [[ -n "${GIT_PASSWORD}" ]]; then
+      
+            git clone "$(echo $(params.git-url) | awk -F '://' '{print $1}')://${GIT_USERNAME}:${GIT_PASSWORD}@$(echo $(params.git-url) | awk -F '://' '{print $2}')" $(params.source-dir)
+        else
+            set -x
+            git clone $(params.git-url) $(params.source-dir)
+        fi
+        set -x
+        cd $(params.source-dir)
+        git checkout $(params.git-revision)
+
+    - name: git-clone-pkg
+      image: quay.io/ibmgaragecloud/alpine-git
+      env:
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+      script: |
+        set +x
+         cd $(params.source-dir)
+        if [[ -n "${GIT_USERNAME}" ]] && [[ -n "${GIT_PASSWORD}" ]]; then
+            git clone "$(echo $(params.git-url-pkg) | awk -F '://' '{print $1}')://${GIT_USERNAME}:${GIT_PASSWORD}@$(echo $(params.git-url-pkg) | awk -F '://' '{print $2}')" $(params.directory-name)
+            git remote -v 
+        else
+            set -x
+            git clone $(params.git-url-pkg) $(params.directory-name)
+        fi
+        set -x
+       
+        
+         cd $(params.directory-name)
+         git checkout $(params.git-revision-pkg)
+    
+    - name: build-artifact
+      image: quay.io/julescheindjou/pipeline_image:v2. (please update )
+      workingDir: $(params.source-dir)
+      script: |
+       #!/usr/bin/env bash
+            set -xe
+            
+            export SERVER_LOCALE_LIST=en_US,en_GB,en
+            export LOCALE_LIST=en_US,en_GB,en
+            export CLIENT_PROJECT_NAME=Curam
+            export SERVER_MODEL_NAME=Curam
+            export CURAM_DIR="/source"
+            export SERVER_DIR=$CURAM_DIR/EJBServer
+            export CURAMSDEJ=$CURAM_DIR/CuramSDEJ
+            export CLIENT_DIR=$CURAM_DIR/webclient
+            export CURAMCDEJ=$CURAM_DIR/CuramCDEJ
+            export CLIENT_COMPONENT_ORDER=custom,CYSSupervisorWorkspace,CYSSECCommon,YouthServices,IVEEligibility,CCSSECCommon,CCSSupervisorWorkspace,ChildServicesBI,ChildServicesSDM,ChildServices,CFSSSECCommon,CFSSCommon,AssessmentPlanningCareManagementCommon,PlatformConfig,CommonIntake,Intake,ReferralsLite,CPMReferralsLite,PCR,CREOLEProgramRecommendation,SummaryViews,Evidence,DecisionAssistAssessments,AssessmentPlanningCPM,AssessmentPlanning,AssessmentPlanningCommon,CitizenContextViewer,WorkspaceServices,CaseParticipantIndex,ClientAccess,CitizenWorkspaceAdmin,SECAppeals,SocialEnterpriseCollaboration,SECCommon,FundPM,CPMAppealCommon,Appeal,SupervisorAppeals,DecisionAssist,CPM,CPMSample,ProviderServicePlan,DynamicEvidence,CEFWidgets,CMIS,IntelligentEvidenceGathering,IEGAdmin,Datastore,Editors,SupervisorWorkspace,Verification,ServicePlans,sample,CTMInfrastructure,SamplePublicAccess,AdvancedEvidenceSharing,EvidenceBroker,CuramFinancialAdapter,CuramMDAdapter,Advisor,EvidenceSharing,PDC,ValidationManager,SmartNavigator
+            export SERVER_COMPONENT_ORDER=custom,YouthServices,IVEEligibility,ChildServicesBI,OutcomeManagementSDMContent,InvestigationSDMContent,ChildServicesSDM,ChildServices,CFSSSECCommon,CFSSCommon,PlatformConfig,Appeal,CommonIntake,Intake,ReferralsLite,CPMReferralsLite,PCR,CREOLEProgramRecommendation,SummaryViews,Evidence,DecisionAssistAssessments,AssessmentPlanningCPM,AssessmentPlanning,CitizenContextViewer,WorkspaceServices,CaseParticipantIndex,ClientAccess,SocialEnterpriseCollaboration,CitizenWorkspaceAdmin,FundPM,SupervisorAppeals,DecisionAssist,CPMSample,CPM,ProviderServicePlan,DynamicEvidence,CEFWidgets,CMISInfrastructure,CMIS,IntelligentEvidenceGathering,Datastore,Editors,SupervisorWorkspace,Verification,ServicePlans,sample,CTMInfrastructure,SamplePublicAccess,AdvancedEvidenceSharing,EvidenceBroker,CuramFinancialAdapter,CuramMDAdapter,CREOLEInfrastructure,Advisor,EvidenceSharing,PDC,PFMAppViews,Workflow,ValidationManager,SmartNavigator
+            export PKG_HOME=$CURAM_DIR/pkg
+
+            touch /opt/h2/curamdb.h2.db
+            java -jar /opt/h2/h2-1.3.176.jar &
+             
+            chmod 777 -R /source/webclient/
+            
+            cd $SERVER_DIR
+            export ANT_OPTS="-Xmx1400m -Dcmp.maxmemory=1400m"
+            ant -f ./build.xml -Dprp.noninternedstrings=true clean server
+            ant -f ./build.xml -Dprp.noninternedstrings=true database prepare.application.data
+
+            cd $CLIENT_DIR
+            export ANT_OPTS="-Xmx1400m -Xbootclasspath/p:$CURAMCDEJ/lib/ext/jar/serializer.jar:$CURAMCDEJ/lib/ext/jar/xercesImpl.jar:$CURAMCDEJ/lib/ext/jar/xalan.jar"
+            ant -f ./build.xml clean client
+            ant -f ./build.xml zip-static-content
+
+            cd $SERVER_DIR
+            export ANT_OPTS="-Xmx1400m -Dcmp.maxmemory=1400m"
+            ant -f ./build.xml libertyEAR -Dcuram.ejbserver.app.name=CuramServerCode -Dprp.noninternedstrings=true
+            ant -f ./build.xml libertyEAR -Dserver.only=true -Dear.name=CuramServerCode -DSERVER_MODEL_NAME=CuramServerCode -Dcuram.ejbserver.app.name=CuramServerCode -Dprp.noninternedstrings=true
+            # ant -f ./build.xml precompilejsp -Dear.file=$SERVER_DIR/build/ear/WLP/Curam.ear -Dprp.noninternedstrings=true
+            ant -f ./build.xml release -Dcreate.zip=true -Dprp.noninternedstrings=true
+            ant -f ./build.xml -Dprp.noninternedstrings=true internal.update.crypto.jar -Dvendor.dir=ibm -Dprp.noninternedstrings=true
+
+            mkdir $PKG_HOME/dockerfiles/Liberty/content/release-stage
+            mkdir $PKG_HOME/dockerfiles/Liberty/content/dependencies
+            unzip -qd $PKG_HOME/dockerfiles/Liberty/content/release-stage $SERVER_DIR/release/release.zip
+            chmod +x $PKG_HOME/dockerfiles/Liberty/content/release-stage/*.sh
+            cp -vf $CLIENT_DIR/build/StaticContent.zip $PKG_HOME/dockerfiles/HTTPServer/
+            cp -vf /curam/content/apache-ant-1.10.6-bin.zip $PKG_HOME/dockerfiles/Liberty/content
+            cp -vf $SERVER_DIR/build/CryptoConfig.jar $PKG_HOME/dockerfiles/Liberty/content/release-stage/build
+            cp -vf /curam/content/activation.jar $PKG_HOME/dockerfiles/Liberty/content/dependencies
+            cp -vf /curam/content/javax.mail.jar $PKG_HOME/dockerfiles/Liberty/content/dependencies
+            cp -vf /curam/content/9.2.3.0-IBM-MQ-Java-InstallRA.jar $PKG_HOME/dockerfiles/Liberty/content/
+  #######    
+    - name: push-artifact-jfrog
+      image: quay.io/julescheindjou/pipeline_image:v2.0(please update)
+      workingDir: $(params.source-dir)
+      env:
+        - name: ARTIFACTORY_URL
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_URL
+              optional: true
+        - name: ARTIFACTORY_USER
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_USER
+              optional: true
+        - name: ARTIFACTORY_ENCRYPT
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_ENCRYPT
+              optional: true
+        - name: ARTIFACTORY_REPOSITORY_KEY
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-access
+              key: ARTIFACTORY_REPOSITORY_KEY
+              optional: true
+      script: |
+           #!/usr/bin/env bash
+           export SERVER_LOCALE_LIST=en_US,en_GB,en
+            export LOCALE_LIST=en_US,en_GB,en
+            export CLIENT_PROJECT_NAME=Curam
+            export SERVER_MODEL_NAME=Curam
+            export CURAM_DIR="/source"
+            export SERVER_DIR=$CURAM_DIR/EJBServer
+            export CURAMSDEJ=$CURAM_DIR/CuramSDEJ
+            export CLIENT_DIR=$CURAM_DIR/webclient
+            export CURAMCDEJ=$CURAM_DIR/CuramCDEJ
+            export CLIENT_COMPONENT_ORDER=custom,CYSSupervisorWorkspace,CYSSECCommon,YouthServices,IVEEligibility,CCSSECCommon,CCSSupervisorWorkspace,ChildServicesBI,ChildServicesSDM,ChildServices,CFSSSECCommon,CFSSCommon,AssessmentPlanningCareManagementCommon,PlatformConfig,CommonIntake,Intake,ReferralsLite,CPMReferralsLite,PCR,CREOLEProgramRecommendation,SummaryViews,Evidence,DecisionAssistAssessments,AssessmentPlanningCPM,AssessmentPlanning,AssessmentPlanningCommon,CitizenContextViewer,WorkspaceServices,CaseParticipantIndex,ClientAccess,CitizenWorkspaceAdmin,SECAppeals,SocialEnterpriseCollaboration,SECCommon,FundPM,CPMAppealCommon,Appeal,SupervisorAppeals,DecisionAssist,CPM,CPMSample,ProviderServicePlan,DynamicEvidence,CEFWidgets,CMIS,IntelligentEvidenceGathering,IEGAdmin,Datastore,Editors,SupervisorWorkspace,Verification,ServicePlans,sample,CTMInfrastructure,SamplePublicAccess,AdvancedEvidenceSharing,EvidenceBroker,CuramFinancialAdapter,CuramMDAdapter,Advisor,EvidenceSharing,PDC,ValidationManager,SmartNavigator
+            export SERVER_COMPONENT_ORDER=custom,YouthServices,IVEEligibility,ChildServicesBI,OutcomeManagementSDMContent,InvestigationSDMContent,ChildServicesSDM,ChildServices,CFSSSECCommon,CFSSCommon,PlatformConfig,Appeal,CommonIntake,Intake,ReferralsLite,CPMReferralsLite,PCR,CREOLEProgramRecommendation,SummaryViews,Evidence,DecisionAssistAssessments,AssessmentPlanningCPM,AssessmentPlanning,CitizenContextViewer,WorkspaceServices,CaseParticipantIndex,ClientAccess,SocialEnterpriseCollaboration,CitizenWorkspaceAdmin,FundPM,SupervisorAppeals,DecisionAssist,CPMSample,CPM,ProviderServicePlan,DynamicEvidence,CEFWidgets,CMISInfrastructure,CMIS,IntelligentEvidenceGathering,Datastore,Editors,SupervisorWorkspace,Verification,ServicePlans,sample,CTMInfrastructure,SamplePublicAccess,AdvancedEvidenceSharing,EvidenceBroker,CuramFinancialAdapter,CuramMDAdapter,CREOLEInfrastructure,Advisor,EvidenceSharing,PDC,PFMAppViews,Workflow,ValidationManager,SmartNavigator
+            export PKG_HOME=$CURAM_DIR/pkg
+          
+           
+            
+            mkdir tmp
+            cp -vf $SERVER_DIR/release/release.zip tmp
+            cd tmp
+            
+            
+            mv release.zip release.$(params.image-tag).zip
+            ls 
+            echo "curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_ENCRYPT} -s -T release.$(params.image-tag).zip ${ARTIFACTORY_URL}/artifactory/generic-local/curam-development/release.$(params.image-tag).zip"
+          
+            curl -u${ARTIFACTORY_USER}:${ARTIFACTORY_ENCRYPT} -s -T release.$(params.image-tag).zip ${ARTIFACTORY_URL}/artifactory/generic-local/curam-development/release.$(params.image-tag).zip
+           
+            
+  ########
+
+    - name: build-docker-image
+      image: $(params.BUILDER_IMAGE)
+      workingDir: $(params.source-dir)
+      env:
+        - name: REGISTRY_USER
+          valueFrom:
+            secretKeyRef:
+              name: registry-access
+              key: REGISTRY_USER
+              optional: true
+        - name: REGISTRY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: registry-access
+              key: REGISTRY_PASSWORD
+              optional: true
+        - name: IBM_ENTITLED_REGISTRY_USER
+          valueFrom:
+            secretKeyRef:
+              name: ibm-entitled-registry-credentials
+              key: IBM_ENTITLED_REGISTRY_USER
+              optional: true
+        - name: IBM_ENTITLED_REGISTRY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ibm-entitled-registry-credentials
+              key: IBM_ENTITLED_REGISTRY_PASSWORD
+              optional: true
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      securityContext:
+        privileged: true
+      script: |
+       cd pkg
+       cd dockerfiles/Liberty
+
+       #### Building Xmlserver image
+
+       APP_IMAGE="$(params.image-server)/$(params.image-namespace)/xmlserver:$(params.image-tag)"
+
+       if [[ -n "${IBM_ENTITLED_REGISTRY_USER}" ]] && [[ -n "${IBM_ENTITLED_REGISTRY_PASSWORD}" ]]; then
+       buildah login -u ${IBM_ENTITLED_REGISTRY_USER} -p ${IBM_ENTITLED_REGISTRY_PASSWORD} cp.icr.io
+       echo "buildah login -u \"${IBM_ENTITLED_REGISTRY_USER}\" -p \"xxxxx\" cp.icr.io"
+       fi 
+       
+
+        buildah login -u jules.cheindjou-ibm  -p Summer75$ registry.connect.redhat.com
+        buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) --build-arg "BASE_REGISTRY=registry.connect.redhat.com/" -f XMLServer.Dockerfile -t ${APP_IMAGE} $(params.CONTEXT)
+
+
+        set +x
+
+        if [[ -n "${REGISTRY_USER}" ]] && [[ -n "${REGISTRY_PASSWORD}" ]] && [[ "$(params.image-server)" != "image-registry.openshift-image-registry.svc:5000"  ]]; then
+        buildah login -u "${REGISTRY_USER}" -p "${REGISTRY_PASSWORD}" "$(params.image-server)" echo "buildah login -u \"${REGISTRY_USER}\" -p \"xxxxx\" \"$(params.image-server)\""
+        fi
+
+        set -x
+
+        buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=$(params.TLSVERIFY) --digestfile ./image-digest ${APP_IMAGE} docker://${APP_IMAGE}
+
+       #### Build utilities image #####
+
+        APP_IMAGE_utilities="$(params.image-server)/$(params.image-namespace)/utilities:$(params.image-tag)"
+
+        if [[ -f Utilities.Dockerfile ]]; then
+        buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) --build-arg  "BASE_REGISTRY=registry.connect.redhat.com/" -f Utilities.Dockerfile -t ${APP_IMAGE_utilities} $(params.CONTEXT) 
+         buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=$(params.TLSVERIFY) --digestfile ./image-digest ${APP_IMAGE_utilities} docker://${APP_IMAGE_utilities} 
+        fi
+       
+       
+        ####### Building Batch image #####
+        APP_IMAGE_BATCH="$(params.image-server)/$(params.image-namespace)/batch:$(params.image-tag)"
+
+        if [[ -f Batch.Dockerfile ]]; then
+         echo -e 'content/release-stage/ear' > .dockerignore
+         buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) -f Batch.Dockerfile -t ${APP_IMAGE_BATCH} $(params.CONTEXT) 
+         buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=$(params.TLSVERIFY) --digestfile ./image-digest ${APP_IMAGE_BATCH} docker://${APP_IMAGE_BATCH} 
+         rm .dockerignore
+        fi
+        
+        ##########
+
+        APP_IMAGE_servercode="$(params.image-server)/$(params.image-namespace)/servercode:$(params.image-tag)"
+
+        if [[ -f ServerEAR.Dockerfile ]]; then
+        buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) --build-arg "MQ_RA_LICENSE=--acceptLicense" --build-arg "MQ_ADAPTER_VERSION=9.2.3.0" -f ServerEAR.Dockerfile -t ${APP_IMAGE_servercode} $(params.CONTEXT) 
+        buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=$(params.TLSVERIFY) --digestfile ./image-digest ${APP_IMAGE_servercode} docker://${APP_IMAGE_servercode} 
+        fi
+        
+        ####### Building Curam image
+
+        APP_IMAGE_curam="$(params.image-server)/$(params.image-namespace)/curam:$(params.image-tag)"
+
+        if [[ -f ClientEAR.Dockerfile ]]; then
+        buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) --build-arg "SERVERCODE_IMAGE=${APP_IMAGE_servercode}" --build-arg "EAR_NAME=Curam" -f ClientEAR.Dockerfile -t ${APP_IMAGE_curam} $(params.CONTEXT) 
+         buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=$(params.TLSVERIFY) --digestfile ./image-digest ${APP_IMAGE_curam} docker://${APP_IMAGE_curam} 
+        fi
+
+
+
+        ##### Building HttpServer image
+
+        cd ../ 
+        cd HTTPServer
+        
+        APP_IMAGE_http="$(params.image-server)/$(params.image-namespace)/httpd:$(params.image-tag)"
+     
+        
+        if [[ -f StaticContent.Dockerfile  ]]; then 
+        buildah login -u << your redhat username>>  -p << password>> registry.redhat.io
+        buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) --build-arg "BASE_REGISTRY=registry.redhat.io/" --build-arg "CONTENT_DIR=/CuramStatic" -f StaticContent.Dockerfile -t ${APP_IMAGE_http} . 
+        buildah --storage-driver=$(params.STORAGE_DRIVER) push --tls-verify=$(params.TLSVERIFY) --digestfile ./image-digest ${APP_IMAGE_http} docker://${APP_IMAGE_http}
+        fi
+        
+        ###### passing variable image-url  between stage ########
+         echo -n "$APP_IMAGE">$(results.image-url-xmlserver.path)
+         echo -n "$APP_IMAGE_BATCH">$(results.image-url-batch.path)
+         echo -n "$APP_IMAGE_http">$(results.image-url-httpserver.path)
+         echo -n "$APP_IMAGE_servercode">$(results.image-url-servercode.path)
+         echo -n "$APP_IMAGE_curam">$(results.image-url-curam.path)
+         echo -n "$APP_IMAGE_utilities">$(results.image-url-utilities.path)
+
+
+        
+  
+            
+        
+           
+

@@ -1,0 +1,301 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ibm-gitops-prod-approval
+  annotations:
+    description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/description: Publishes the helm chart configuration to the provided gitops repo to trigger downstream deployments
+    app.openshift.io/vcs-uri: https://github.com/IBM/ibm-garage-tekton-tasks
+    app.openshift.io/vcs-ref: master
+  labels:
+    version: 0.0.0
+spec:
+  params:
+    - name: app-name
+      default: "spm"
+    - name: version
+      default: ""
+    - name: src-environment
+      default: "sit-deploy"
+    - name: dest-environment
+      default: "prod"
+    - name: app-path
+      default: "spm"
+    - name: source-dir
+      default: /source
+    - name: subdir
+      default: "spmeight-argocd"
+    - name: parentdir
+      default: ""
+    - name: helm-url
+      default: ""
+    - name: git-pr
+      default: "true"
+    - name: tools-image
+      default: quay.io/julescheindjou/pipeline_github_cli:v4.0 (please update the path)
+  volumes:
+    - name: source
+      emptyDir: {}
+    - name: git-token-curam (please create new token)
+      secret:
+        secretName: git-token-curam (please create new secret)
+  stepTemplate:
+    volumeMounts:
+      - name: source
+        mountPath: $(params.source-dir)
+      
+  steps:
+    - name: gitops
+      image: $(params.tools-image)
+      workingDir: $(params.source-dir)
+      volumeMounts:
+      - name: git-token-curam
+        mountPath: $(params.source-dir)/token
+
+      env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOME
+          value: /home/devops
+        - name: GIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+              optional: true
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+              optional: true
+        - name: GIT_PARENT_DIR
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: parentdir
+              optional: true
+        - name: GIT_PROTOCOL
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: protocol
+              optional: true
+        - name: GIT_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: host
+              optional: true
+        - name: GIT_ORG
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: org
+              optional: true
+        - name: GIT_REPO
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: repo
+              optional: true
+        - name: GIT_BRANCH
+          valueFrom:
+            configMapKeyRef:
+              name: gitops-repo-curam
+              key: branch
+              optional: true
+      script: |
+          #!/usr/bin/env bash
+          set -ex
+          APP_NAME="$(params.app-name)"
+          SUBDIR="$(params.subdir)"
+          if [[ -z "${SUBDIR}" ]]; then
+            SUBDIR="${APP_NAME}"
+          fi
+          if [[ -n "$(params.parentdir)" ]]; then
+            if [[ -n "$(params.src-environment)" ]]; then
+              PARENT_DIR_SRC="$(params.src-environment)/${SUBDIR}/$(params.app-path)"
+            fi
+            if [[ -n "$(params.dest-environment)" ]]; then
+              PARENT_DIR_DEST="$(params.dest-environment)/${SUBDIR}/$(params.app-path)"
+            else
+              echo "Please set destination environment"
+            fi
+          elif [[ -n "${GIT_PARENT_DIR}" ]] && [[ "${GIT_PARENT_DIR}" = "bash -c"* ]]; then
+            if [[ -n "$(params.src-environment)" ]]; then
+              PARENT_DIR_SRC=$(eval $GIT_PARENT_DIR | tail -n 1)"$(params.src-environment)/${SUBDIR}/$(params.app-path)"
+            fi
+            if [[ -n "$(params.dest-environment)" ]]; then
+              PARENT_DIR_DEST=$(eval $GIT_PARENT_DIR | tail -n 1)"$(params.dest-environment)/${SUBDIR}/$(params.app-path)"
+            else
+              echo "Please set destination environment"
+            fi
+          elif [[ -n "${GIT_PARENT_DIR}" ]]; then
+            if [[ -n "$(params.src-environment)" ]]; then
+              PARENT_DIR_SRC="$(params.src-environment)/${SUBDIR}/$(params.app-path)"
+            fi
+            if [[ -n "$(params.dest-environment)" ]]; then
+              PARENT_DIR_DEST="$(params.dest-environment)/${SUBDIR}/$(params.app-path)"
+            else
+              echo "Please set destination environment"
+            fi
+          else
+            if [[ -n "$(params.src-environment)" ]]; then
+              PARENT_DIR_SRC="."
+            fi
+            if [[ -n "$(params.dest-environment)" ]]; then
+              PARENT_DIR_DEST="."
+            else
+              echo "Please set destination environment"
+            fi
+          fi
+          if [[ -n "$(params.src-environment)" ]]; then
+            SUBDIR_SRC="$(params.src-environment)/${SUBDIR}/$(params.app-path)"
+          fi
+          if [[ -n "$(params.dest-environment)" ]]; then
+            SUBDIR_DEST="$(params.dest-environment)/${SUBDIR}/$(params.app-path)"
+          else
+            echo "Please set destination environment"
+          fi
+          PROTOCOL="${GIT_PROTOCOL}"
+          if [[ -z "${PROTOCOL}" ]]; then
+            PROTOCOL="https"
+          fi
+         
+          if [[ -z "${GIT_HOST}" ]] || [[ -z "${GIT_ORG}" ]] || [[ -z "${GIT_REPO}" ]]; then
+              echo "GitOps repo has not been configured with confimap gitops-repo. Skipping trigger step"
+              exit 0
+          fi
+          set +x
+          if [[ -n "${GIT_USERNAME}" ]]; then
+            GIT_AUTH_USER="${GIT_USERNAME}"
+            GIT_AUTH_PWD="${GIT_PASSWORD}"
+          else
+            echo "Credentials for GitOps repo not set in secret gitops-cd-secret or git-credentials"
+            exit 1
+          fi
+          set -x
+          # BRANCH_CMD=""
+          # if [[ -n "${GIT_BRANCH}" ]]; then
+          #   BRANCH_CMD="-b sit-deploy"
+
+          # fi
+          git config --global user.email "michael.wallack@ibm.com"
+          git config --global user.name "michael.wallack"
+         
+          set +x
+          
+
+          
+         
+          git clone -b sit-deploy https://${GIT_AUTH_USER}:${GIT_AUTH_PWD}@github.ibm.com/Michael-Wallach/Gitops.git
+          
+  
+        
+        
+          set -x
+      
+          cat token/token.txt
+          gh auth login --hostname github.ibm.com --with-token < token/token.txt
+          gh auth status
+
+          cd Gitops
+        
+          
+          if [[ -z "$(params.src-environment)" ]]; then
+            VERSION="$(params.version)"
+            HELM_URL="$(params.helm-url)"
+          else
+            VERSION="$(grep 'version:' ./$(params.src-environment)/$(params.subdir)/$(params.app-path)/Chart.yaml | awk 'NR==2{print $2}')"
+            HELM_URL="$(grep 'repository:' ./$(params.src-environment)/$(params.subdir)/$(params.app-path)/Chart.yaml  | awk 'NR==1{print $2}')"
+          fi
+
+           git switch prod
+          
+          if [[  -f "${SUBDIR_DEST}/Chart.yaml" ]]; then
+            echo "Requirements before update"  
+
+            cat "${SUBDIR_DEST}/Chart.yaml"
+
+           
+          elif [[ -n "${HELM_URL}" ]]; then
+            if [[ ! -z ${SUBDIR_DEST} ]]; then
+              files=$(ls ${SUBDIR_DEST} | wc -l)
+              if [[ ${files} -gt 1 && ${files} -lt 3 ]]; then
+                echo "${SUBDIR_DEST} is present but files are not existing"
+                #rm -rf ${SUBDIR_DEST}
+              fi
+            fi
+            else
+            echo "Creating first time chart using ${SUBDIR_DEST}"
+            # create directory
+            mkdir -p "${SUBDIR_DEST}"
+            # WARNING: Do not indent the cat commands below
+          cat <<EOF >"${SUBDIR_DEST}/Chart.yaml"
+          apiVersion: v2
+          version: 0.1.0
+          name: ${APP_NAME}
+          description: Chart to configure ArgoCD with the ${APP_NAME} project and its applications
+          dependencies:
+            - name: ${APP_NAME}
+              version: ${VERSION}
+              repository: ${HELM_URL}
+          EOF
+        
+          cat <<EOF >"${SUBDIR_DEST}/values.yaml"
+          global: {}
+          ${APP_NAME}:
+            replicaCount: 1
+          EOF
+         
+          fi
+          
+          # APP_VERSION="$(git rev-parse HEAD | cut -c 1-8)"
+
+          
+          git checkout -b curam-ci-pipeline-prod-${APP_NAME}-${VERSION}
+
+          ### update tag version on new branch
+           sed -i "s/0\.0\.[0-9.]*/${VERSION}/" ${SUBDIR_DEST}/Chart.yaml
+           sed -i "s/0\.0\.[0-9.]*/${VERSION}/" ${SUBDIR_DEST}/values.yaml
+
+            if [[ $(git status -s | wc -l) -eq 0 ]]; then
+              echo "No changes "
+             exit 0
+            elif [[ "$(params.git-pr)" = "false" ]]; then
+              git add "${SUBDIR_DEST}/"
+              git commit -m "Updates ${APP_NAME} to ${VERSION}"
+             git push -v
+             else 
+            
+           
+            echo "Requirements after update"
+            cat "${SUBDIR_DEST}/Chart.yaml"
+
+            # push changes to git
+            git status
+            git add "${SUBDIR_DEST}/"
+            
+            git commit -am "Update tag version  ${APP_NAME} to ${VERSION}" --no-edit --signoff
+          
+            git push --set-upstream origin curam-ci-pipeline-prod-${APP_NAME}-${VERSION}
+            
+            ## create the pull request"
+            pull=$(gh pr create --title "PR to deploy  Build ${VERSION} in PRD environment" --body "prod  approval " --base "prod" --head "curam-ci-pipeline-prod-${APP_NAME}-${VERSION}" -a Michael-Wallach)
+            echo $pull
+            Git_api_url=$(echo $pull | grep  'https://github.ibm.com' | sed 's/https:\/\/github.ibm.com/repos/g' | sed 's/pull/pulls/g')
+            
+            echo "$Git_api_url"
+
+            pullrequest_state=$(gh api --hostname github.ibm.com $Git_api_url | jq .state | tr -d '"' )
+
+            echo " pull request is still  $pullrequest_state"
+                 
+            
+          fi
+             
+            
+

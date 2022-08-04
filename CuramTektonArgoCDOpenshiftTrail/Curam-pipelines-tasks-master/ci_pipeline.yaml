@@ -1,0 +1,171 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  annotations:
+    app.openshift.io/runtime: nodejs
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"tekton.dev/v1beta1","kind":"Pipeline","metadata":{"annotations":{"app.openshift.io/runtime":"nodejs"},"name":"ibm-nodejs","namespace":"tools"},"spec":{"params":[{"description":"The
+      url for the git
+      repository","name":"git-url"},{"default":"master","description":"The git
+      revision (branch, tag, or sha) that should be
+      built","name":"git-revision"},{"default":"true","description":"Enable the
+      pipeline to scan the image for
+      vulnerabilities","name":"scan-image"},{"default":"true","description":"Enable
+      the pipeline to lint the Dockerfile for best
+      practices","name":"lint-dockerfile"}],"tasks":[{"name":"setup","params":[{"name":"git-url","value":"$(params.git-url)"},{"name":"git-revision","value":"$(params.git-revision)"},{"name":"scan-image","value":"$(params.scan-image)"},{"name":"lint-dockerfile","value":"$(params.lint-dockerfile)"}],"taskRef":{"name":"ibm-setup-v2-7-3"}},{"name":"test","params":[{"name":"git-url","value":"$(tasks.setup.results.git-url)"},{"name":"git-revision","value":"$(tasks.setup.results.git-revision)"},{"name":"source-dir","value":"$(tasks.setup.results.source-dir)"},{"name":"js-image","value":"$(tasks.setup.results.js-image)"},{"name":"app-name","value":"$(tasks.setup.results.app-name)"}],"runAfter":["setup"],"taskRef":{"name":"ibm-nodejs-test-v2-7-3"}},{"name":"dockerfile-lint","params":[{"name":"git-url","value":"$(tasks.setup.results.git-url)"},{"name":"git-revision","value":"$(tasks.setup.results.git-revision)"},{"name":"source-dir","value":"$(tasks.setup.results.source-dir)"},{"name":"lint-dockerfile","value":"$(tasks.setup.results.dockerfile-lint)"}],"runAfter":["test"],"taskRef":{"name":"ibm-dockerfile-lint-v2-7-3"}},{"name":"build","params":[{"name":"git-url","value":"$(tasks.setup.results.git-url)"},{"name":"git-revision","value":"$(tasks.setup.results.git-revision)"},{"name":"source-dir","value":"$(tasks.setup.results.source-dir)"},{"name":"image-server","value":"$(tasks.setup.results.image-server)"},{"name":"image-namespace","value":"$(tasks.setup.results.image-namespace)"},{"name":"image-repository","value":"$(tasks.setup.results.image-repository)"},{"name":"image-tag","value":"$(tasks.setup.results.image-tag)"}],"runAfter":["dockerfile-lint"],"taskRef":{"name":"ibm-build-tag-push-v2-7-3"}},{"name":"deploy","params":[{"name":"git-url","value":"$(tasks.setup.results.git-url)"},{"name":"git-revision","value":"$(tasks.setup.results.git-revision)"},{"name":"source-dir","value":"$(tasks.setup.results.source-dir)"},{"name":"image-server","value":"$(tasks.setup.results.image-server)"},{"name":"image-namespace","value":"$(tasks.setup.results.image-namespace)"},{"name":"image-repository","value":"$(tasks.setup.results.image-repository)"},{"name":"image-tag","value":"$(tasks.setup.results.image-tag)"},{"name":"app-namespace","value":"$(tasks.setup.results.app-namespace)"},{"name":"app-name","value":"$(tasks.setup.results.app-name)"},{"name":"deploy-ingress-type","value":"$(tasks.setup.results.deploy-ingress-type)"},{"name":"tools-image","value":"$(tasks.setup.results.tools-image)"}],"runAfter":["build"],"taskRef":{"name":"ibm-deploy-v2-7-3"}},{"name":"health","params":[{"name":"app-namespace","value":"$(tasks.setup.results.app-namespace)"},{"name":"app-name","value":"$(tasks.setup.results.app-name)"},{"name":"deploy-ingress-type","value":"$(tasks.setup.results.deploy-ingress-type)"},{"name":"health-protocol","value":"$(tasks.setup.results.health-protocol)"},{"name":"health-endpoint","value":"$(tasks.setup.results.health-endpoint)"},{"name":"health-url","value":"$(tasks.setup.results.health-url)"},{"name":"health-curl","value":"$(tasks.setup.results.health-curl)"},{"name":"tools-image","value":"$(tasks.setup.results.tools-image)"}],"runAfter":["deploy"],"taskRef":{"name":"ibm-health-check-v2-7-3"}},{"name":"tag-release","params":[{"name":"git-url","value":"$(tasks.setup.results.git-url)"},{"name":"git-revision","value":"$(tasks.setup.results.git-revision)"},{"name":"source-dir","value":"$(tasks.setup.results.source-dir)"},{"name":"js-image","value":"$(tasks.setup.results.js-image)"}],"runAfter":["health"],"taskRef":{"name":"ibm-tag-release-v2-7-3"}},{"name":"img-release","params":[{"name":"image-from","value":"$(tasks.setup.results.image-url)"},{"name":"image-to","value":"$(tasks.setup.results.image-release):$(tasks.tag-release.results.tag)"}],"runAfter":["tag-release"],"taskRef":{"name":"ibm-img-release-v2-7-3"}},{"name":"img-scan","params":[{"name":"image-url","value":"$(tasks.img-release.results.image-url)"},{"name":"scan-trivy","value":"$(tasks.setup.results.scan-trivy)"},{"name":"scan-ibm","value":"$(tasks.setup.results.scan-ibm)"}],"runAfter":["img-release"],"taskRef":{"name":"ibm-img-scan-v2-7-3"}},{"name":"helm-release","params":[{"name":"git-url","value":"$(tasks.setup.results.git-url)"},{"name":"git-revision","value":"$(tasks.setup.results.git-revision)"},{"name":"source-dir","value":"$(tasks.setup.results.source-dir)"},{"name":"image-url","value":"$(tasks.img-release.results.image-url)"},{"name":"app-name","value":"$(tasks.setup.results.app-name)"},{"name":"deploy-ingress-type","value":"$(tasks.setup.results.deploy-ingress-type)"},{"name":"tools-image","value":"$(tasks.setup.results.tools-image)"}],"runAfter":["img-scan"],"taskRef":{"name":"ibm-helm-release-v2-7-3"}},{"name":"gitops","params":[{"name":"app-name","value":"$(tasks.setup.results.app-name)"},{"name":"version","value":"$(tasks.tag-release.results.tag)"},{"name":"helm-url","value":"$(tasks.helm-release.results.helm-url)"},{"name":"tools-image","value":"$(tasks.setup.results.tools-image)"}],"runAfter":["helm-release"],"taskRef":{"name":"ibm-gitops-v2-7-3"}}]}}
+  selfLink: /apis/tekton.dev/v1beta1/namespaces/jules-project/pipelines/spmeight
+  name: spmeight ( please update)
+spec:
+  params:
+    - description: The url for the git repository
+      name: git-url
+      type: string
+    - default: master
+      description: 'The git revision (branch, tag, or sha) that should be built'
+      name: git-revision
+      type: string
+    - default: 'false'
+      description: Enable the pipeline to scan the image for vulnerabilities
+      name: scan-image
+      type: string
+    - default: 'false'
+      description: Enable the pipeline to lint the Dockerfile for best practices
+      name: lint-dockerfile
+      type: string
+  tasks:
+    - name: setup
+      params:
+        - name: git-url
+          value: $(params.git-url)
+        - name: git-revision
+          value: $(params.git-revision)
+        - name: scan-image
+          value: $(params.scan-image)
+        - name: lint-dockerfile
+          value: $(params.lint-dockerfile)
+      taskRef:
+        kind: Task
+        name: ibm-setup-v2-7-3
+      timeout: 1h30m30s
+    - name: tag-release
+      params:
+        - name: git-url
+          value: $(tasks.setup.results.git-url)
+        - name: git-revision
+          value: $(params.git-revision)
+        - name: source-dir
+          value: $(tasks.setup.results.source-dir)
+        - name: js-image
+          value: $(tasks.setup.results.js-image)
+      runAfter:
+        - setup
+      taskRef:
+        kind: Task
+        name: ibm-tag-release-v2-7-3
+      timeout: 1h30m30s
+    - name: helm-release
+      params:
+        - name: git-url
+          value: 'https://github.ibm.com/Michael-Wallach/curaas-pkg.git' (please update)
+        - name: source-dir
+          value: $(tasks.setup.results.source-dir)
+        - name: image-url
+          value: $(tasks.ibm-build-tag-push-curam.results.image-url-httpserver) 
+        - name: app-name
+          value: $(tasks.setup.results.app-name)
+        - name: deploy-ingress-type
+          value: $(tasks.setup.results.deploy-ingress-type)
+        - name: tools-image
+          value: $(tasks.setup.results.tools-image)
+      runAfter:
+        - ibm-build-tag-push-curam 
+      taskRef:
+        kind: Task
+        name: ibm-helm-release-v2-7-3
+      timeout: 1h30m30s
+    - name: ibm-build-tag-push-curam
+      params:
+        - name: git-url
+          value: $(tasks.setup.results.git-url)
+        - name: git-url-pkg
+          value: 'https://github.ibm.com/Michael-Wallach/curaas-pkg.git'(please update if you have different repo url)
+        - name: git-revision
+          value: $(params.git-revision)
+        - name: git-revision-pkg
+          value: master
+        - name: directory-name
+          value: pkg
+        - name: source-dir
+          value: /source
+        - name: BUILDER_IMAGE
+          value: 'quay.io/buildah/stable:v1.15.0'
+        - name: DOCKERFILE
+          value: ./Dockerfile
+        - name: CONTEXT
+          value: .
+        - name: TLSVERIFY
+          value: 'false'
+        - name: FORMAT
+          value: docker
+        - name: STORAGE_DRIVER
+          value: overlay
+        - name: image-tag
+          value: $(tasks.tag-release.results.tag)
+        - name: image-server
+          value: $(tasks.setup.results.image-server)
+        - name: image-namespace
+          value: $(tasks.setup.results.image-namespace)
+        - name: image-repository
+          value: $(tasks.setup.results.image-repository)
+      runAfter:
+        - tag-release
+      taskRef:
+        kind: Task
+        name: ibm-build-tag-push-curam
+      timeout: 1h30m30s
+    - name: ibm-dev-deploy-gitops
+      params:
+        - name: app-name
+          value: spm
+        - name: source-dir
+          value: /source
+        - name: subdir
+          value: spmeight-argocd
+        - name: parentdir
+          value: dev-deploy
+        - name: git-pr
+          value: 'false'
+        - name: tools-image
+          value: 'quay.io/julescheindjou/pipeline_github_cli:v4.0' (please update)
+        - name: version
+          value: $(tasks.tag-release.results.tag)
+      runAfter:
+        - helm-release
+      taskRef:
+        kind: Task
+        name: ibm-dev-deploy-gitops
+      timeout: 1h30m30s
+    - name: ibm-gitops-sit-approval
+      params:
+        - name: app-name
+          value: spm
+        - name: src-environment
+          value: dev-deploy
+        - name: dest-environment
+          value: sit-deploy
+        - name: app-path
+          value: spm
+        - name: source-dir
+          value: /source
+        - name: subdir
+          value: spmeight-argocd
+        - name: git-pr
+          value: 'true'
+        - name: tools-image
+          value: 'quay.io/julescheindjou/pipeline_github_cli:v4.0' (please update)
+      runAfter:
+        - ibm-dev-deploy-gitops
+      taskRef:
+        kind: Task
+        name: ibm-gitops-sit-approval
+      timeout: 1h30m30s

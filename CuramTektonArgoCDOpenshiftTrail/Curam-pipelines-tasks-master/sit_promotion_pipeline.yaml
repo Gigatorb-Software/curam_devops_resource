@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: gitops-promote-sit-deploy ( please update if you are using different name)
+spec:
+  tasks:
+    - name: ibm-sync-sit-deploy
+      params:
+        - name: source-dir
+          value: /source
+        - name: tools-image
+          value: 'quay.io/julescheindjou/argocd-cli:v6.0' (please update )
+      runAfter:
+        - ibm-update-database
+      taskRef:
+        kind: Task
+        name: ibm-sync-sit-deploy
+    - name: ibm-sit-pod-down
+      params:
+        - name: source-dir
+          value: /source
+        - name: tools-image
+          value: 'quay.io/julescheindjou/argocd-cli:v6.0' (please update)
+      taskRef:
+        kind: Task
+        name: ibm-sit-pod-down
+    - name: ibm-update-database
+      params:
+        - name: src-environment
+          value: dev-deploy
+        - name: dest-environment
+          value: sit-deploy
+        - name: app-path
+          value: spm
+        - name: subdir
+          value: spmeight-argocd
+        - name: source-dir
+          value: /source
+        - name: tools-image
+          value: 'quay.io/julescheindjou/pipeline_image:v2.0'( please update)
+      runAfter:
+        - ibm-sit-pod-down
+      taskRef:
+        kind: Task
+        name: ibm-update-database
+    - name: ibm-gitops-prod-approval
+      params:
+        - name: app-name
+          value: spm
+        - name: src-environment
+          value: sit-deploy
+        - name: dest-environment
+          value: prod
+        - name: app-path
+          value: spm
+        - name: source-dir
+          value: /source
+        - name: subdir
+          value: spmeight-argocd
+        - name: git-pr
+          value: 'true'
+        - name: tools-image
+          value: 'quay.io/julescheindjou/pipeline_github_cli:v4.0' ( please update )
+      runAfter:
+        - ibm-sync-sit-deploy
+      taskRef:
+        kind: Task
+        name: ibm-gitops-prod-approval
