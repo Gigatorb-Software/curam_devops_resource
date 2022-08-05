@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config date="1530037912068" transient="false">
-	<site updateable="true" url="platform:/base/" enabled="true" policy="USER-EXCLUDE">
-		<feature id="org.eclipse.birt.engine.runtime" version="4.8.0.v201806261756" url="features/org.eclipse.birt.engine.runtime_4.8.0.v201806261756/">
-		</feature>
-	</site>
-</config>
