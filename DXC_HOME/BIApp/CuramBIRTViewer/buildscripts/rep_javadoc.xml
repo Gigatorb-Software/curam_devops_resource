@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+	Licensed Materials - Property of IBM 
+	
+	PID 5725-H26
+	
+	Copyright IBM Corporation 2012,2020. All rights reserved. 
+	
+	US Government Users Restricted Rights - Use, duplication or disclosure
+	restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<project default="generate.javadoc" name="bi_curambirtviewerdoc">
+
+  <property environment="sysenv." />
+  <!--  ***************************  -->
+  <!--  ***  Import Properties  ***  -->
+  <!--  ***************************  -->
+
+  <import file="./app_BIproperties.xml" />
+
+  <target name="generate.javadoc.external">
+    <echo message="Creates external javadoc for the Curam BIRT Viewer " />
+    <echo message="writing to ${param.javadocsoutputdir} core" />
+
+
+    <mkdir dir="${param.javadocsoutputdir}" />
+
+
+    <javadoc footer="Licensed Materials - Property of IBM&lt;br&gt;&lt;br&gt;Copyright IBM Corporation 2012. All rights reserved.&lt;br&gt;US Government Users Restricted Rights - Use, duplication or disclosure&lt;br&gt;restricted by GSA ADP Schedule Contract with IBM Corp."
+             doctitle="Curam BIRT Infrastructure API"
+             source="1.5"
+             access="public"
+             destdir="${param.javadocsoutputdir}/api"
+             author="false"
+             splitindex="true"
+             version="true"
+             includenosourcepackages="true"
+             use="true"
+             nodeprecated="false"
+             nodeprecatedlist="false"
+             noindex="false"
+             nonavbar="false"
+             notree="false"
+             windowtitle="Business Intelligence and Analytics: Curam BIRT Viewer API Doc"
+             verbose="false"
+             doclet="curam.util.reporting.internal.apidoc.BIAPIDoclet"
+             docletpath="${dir.biapp.lib}/${dir.biapp.doclet.jarname}">
+
+      <fileset dir="${dir.biapp}/components/core/javasource"
+               excludes="excludes*.java"
+               includes="biapp/*.java, curam/util/type/*.java" />
+
+
+
+      <classpath>
+        <fileset dir="${dir.biapp.components.bicontent.scriptslib}/">
+          <include name="${biaclasses.jar}" />
+        </fileset>
+        <!-- include coreinf jar from CuramSDEJ lib -->
+        <fileset dir="${dir.CURAMSDEJ}/lib">
+          <include name="coreinf.jar" />
+        </fileset>
+        <fileset dir="${dir.biapp.lib}">
+          <include name="scriptapi.jar" />
+        </fileset>
+        <fileset dir="${dir.biapp.webcontent.core}/WEB-INF/platform/plugins">
+          <include name="scriptapi.jar" />
+        </fileset>
+        <fileset dir="${dir.biapp.webcontent.core}/WEB-INF/platform/plugins">
+          <include name="org.eclipse.birt.report.engine_4.8.0.v201806261756.jar" />
+        </fileset>
+        <fileset file="${sysenv.J2EE_JAR}" />
+        <fileset file="${sysenv.JAVA_HOME}/lib/tools.jar}" />
+      </classpath>
+
+      <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
+
+      <taglet name="curam.util.reporting.internal.apidoc.BIBusinessObjectRead">
+        <path refid="jar.reporting.doctasks.refid" />
+      </taglet>
+      <taglet name="curam.util.reporting.internal.apidoc.BIBusinessObjectWrite">
+        <path refid="jar.reporting.doctasks.refid" />
+      </taglet>
+      <taglet name="curam.util.reporting.internal.apidoc.BIBusinessProcessing">
+        <path refid="jar.reporting.doctasks.refid" />
+      </taglet>
+
+    </javadoc>
+    <zip destfile="${param.javadocsoutputdir}/api.zip">
+      <fileset dir="${param.javadocsoutputdir}/api" />
+    </zip>
+
+
+
+  </target>
+</project>

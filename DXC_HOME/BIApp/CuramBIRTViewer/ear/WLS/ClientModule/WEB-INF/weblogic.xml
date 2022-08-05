@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/90">
+  
+  <container-descriptor>
+    <prefer-web-inf-classes>true</prefer-web-inf-classes>
+    <show-archived-real-path-enabled>true</show-archived-real-path-enabled>
+  </container-descriptor>
+  
+  <resource-description>     
+    <jndi-name>jdbc/curamdb</jndi-name>     
+    <res-ref-name>jdbc/curamdb</res-ref-name> 
+  </resource-description>
+  
+  <resource-description>     
+    <jndi-name>jdbc/curamdm</jndi-name>     
+    <res-ref-name>jdbc/curamdm</res-ref-name> 
+  </resource-description>  
+
+  <security-role-assignment>
+      <role-name>everyone</role-name>
+      <principal-name>Curam</principal-name>
+   </security-role-assignment>
+   
+</weblogic-web-app>

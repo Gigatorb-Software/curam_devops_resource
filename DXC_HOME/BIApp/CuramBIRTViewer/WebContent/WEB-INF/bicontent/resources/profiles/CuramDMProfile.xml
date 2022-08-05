@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><DataTools.ServerProfiles version="1.0">
+<profile autoconnect="No" desc="CuramDatamart" id="dc7c05e0-8f2d-11df-b020-b80b219bd028" name="CuramDMProfile" providerID="org.eclipse.birt.report.data.oda.jdbc"><baseproperties>
+<property name="odaJndiName" value="java:comp/env/jdbc/curamdm"/>
+<property name="odaDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
+<property name="odaURL" value="jdbc:oracle:thin:@silverstreak:1521:orcl"/>
+<property name="odaPassword" value="p"/>
+<property name="odaUser" value="staging"/>
+<property name="contentBidiFormatStr" value="ILYNN"/>
+<property name="metadataBidiFormatStr" value="ILYNN"/>
+</baseproperties></profile></DataTools.ServerProfiles>

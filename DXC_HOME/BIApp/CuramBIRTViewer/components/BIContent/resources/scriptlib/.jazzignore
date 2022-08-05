@@ -1,0 +1,3 @@
+core.ignore= \
+	{curam-birt-mtd.jar} \
+	{curam-birt.jar} \

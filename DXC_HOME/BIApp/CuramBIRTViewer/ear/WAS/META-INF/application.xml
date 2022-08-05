@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed Materials - Property of IBM
+
+  Copyright IBM Corporation 2012. All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or disclosure
+  restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<application xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="5"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
+
+    <display-name>CuramBIRTViewer</display-name>
+	
+    <module>
+        <web>
+            <web-uri>ClientModule.war</web-uri>
+            <context-root>/CuramBIRTViewer</context-root>
+        </web>
+    </module>
+	
+  <security-role id="SecurityRole_1">
+    <description>Role all users are in</description>
+    <role-name>everyone</role-name>
+  </security-role>
+  <security-role id="SecurityRole_2">
+    <description>Role for message-driven beans</description>
+    <role-name>mdbuser</role-name>
+  </security-role>
+  <security-role id="SecurityRole_3">
+    <description>Role for mbeancreator</description>
+    <role-name>mbeancreator</role-name>
+  </security-role>
+
+</application>

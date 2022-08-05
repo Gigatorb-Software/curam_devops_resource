@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" output="work" path="work"/>
+	<classpathentry kind="lib" path="/CuramSDEJ/lib/coreinf.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/CuramSDEJ/doc/api.zip!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/bicontent/resources/scriptlib/curam-birt.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/CuramBIRTViewer/doc/api.zip!/"/>
+		</attributes>
+		<accessrules>
+			<accessrule kind="discouraged" pattern="biapp/ListContentByComponentWLS"/>
+			<accessrule kind="discouraged" pattern="biapp/ListContentByComponent"/>
+			<accessrule kind="discouraged" pattern="biapp/BIRTConnectionForDB"/>
+			<accessrule kind="discouraged" pattern="biapp/BIRTConnectionForDataMart"/>
+			<accessrule kind="nonaccessible" pattern="curam/util/type/*"/>
+			<accessrule kind="nonaccessible" pattern="biapp/AppPropertyReader"/>
+			<accessrule kind="nonaccessible" pattern="biapp/EncryptionUtil"/>
+			<accessrule kind="nonaccessible" pattern="biapp/ReportingPropertyReader"/>
+			<accessrule kind="accessible" pattern="biapp/CaseStatusData"/>
+			<accessrule kind="accessible" pattern="biapp/Encryption"/>
+			<accessrule kind="accessible" pattern="biapp/CuramSampleDataLineChartEventHandler"/>
+			<accessrule kind="accessible" pattern="biapp/CuramSampleDataScriptedEventHandler"/>
+			<accessrule kind="accessible" pattern="biapp/CuramSampleDataRowGeneratorEventHandler"/>
+			<accessrule kind="accessible" pattern="biapp/CuramDMDataSourceEventHandler"/>
+			<accessrule kind="accessible" pattern="biapp/CuramDataSourceEventHandler"/>
+			<accessrule kind="accessible" pattern="biapp/UniqueIDUtil"/>
+		</accessrules>
+	</classpathentry>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/platform/plugins/org.eclipse.birt.core_4.8.0.v201806261756.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/platform/plugins/org.eclipse.birt.report.engine_4.8.0.v201806261756.jar"/>
+	<classpathentry kind="output" path="eclipsebuild"/>
+</classpath>

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.10.6
+Created-By: 1.8.0_321-b07 (Oracle Corporation)
+Class-Path:          properties.jar
+
+Name: common
+Specification-Title: CuramBIRTViewer
+Specification-Vendor: IBM Corporation.
+

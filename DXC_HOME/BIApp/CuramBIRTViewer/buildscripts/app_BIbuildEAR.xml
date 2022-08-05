@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+	Licensed Materials - Property of IBM 
+	
+	PID 5725-H26
+	
+	Copyright IBM Corporation 2012,2020. All rights reserved. 
+	
+	US Government Users Restricted Rights - Use, duplication or disclosure
+	restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+<project name="BIEARBuild" default="biapp.BIRTViewerEARs">
+
+  <!--  ***************************  -->
+  <!--  ***  Import Properties  ***  -->
+  <!--  ***************************  -->
+
+  <import file="./app_BIproperties.xml" />
+  <import file="./app_BIUtilities.xml" />
+
+  <!-- we need targets and properties from app_rumtimewas.xml-->
+  <import file="${dir.CURAMSDEJ}/bin/app_runtimewas.xml" />
+  <import file="${dir.CURAMSDEJ}/bin/app_configureWAS.xml" />
+
+  <property name="CURAM_LIST_PAGE_DEBUG" value="false" />
+  <!--  ***  amend the relese process by copying BI build      ***  -->
+  <!--  ***  files required to apply a Websphere setting      ***  -->
+
+  <target name="biapp.release"
+          description="Copied BI build files required to run biapp.configure.birtviewer (post install step for WAS)">
+
+    <!-- Copy BI build files -->
+    <copy todir="${dir.release}" failonerror="false">
+      <fileset dir="${dir.CURAM_DIR}">
+        <include name="BIApp/CuramBIRTViewer/buildscripts/*.*" />
+      </fileset>
+    </copy>
+  </target>
+
+  <!--  ***  Start configure the BIRT Viewer application      ***  -->
+  <!--  ***  this will be moved to SDEJ                      ***  -->
+
+  <target name="biapp.configure.birtviewer"
+          depends="runtime.init, check.ear.file"
+          description="Configures the Curam BIRT Viewer application (use -Dserver.name= -Dear.file= -Dapplication.name=)">
+
+    <antcall target="configure.was.birtviewer" />
+    <antcall target="configure.wlp.birtviewer" />
+    <!-- nothing to do for weblogic
+      <antcall target="configure.wls"/>
+    -->
+  </target>
+
+  <target name="configure.was.birtviewer" if="vendor.equals.ibm">
+    <antcall target="check.application.name" />
+    <antcall target="configure.birtviewer.was" />
+  </target>
+  
+  <target name="configure.wlp.birtviewer" if="vendor.equals.wlp">
+    <antcall target="check.application.name" />
+    <antcall target="configure.birtviewer.wlp" />
+  </target>
+
+  <!--  *******************************************************  -->
+  <!--  ***  Configure the BIRT Viewer application for WLP  ***  -->
+  <!--  *******************************************************  -->
+  <target name="configure.birtviewer.wlp" depends="init, check.server.name">
+    <property name="wlp.home" value="${sysenv.WLP_HOME}" />
+        
+    <echo message="using ${wlp.home}" />
+    <echo message="Configuring ${application.name} on ${server.name}..." />
+    
+    <replace
+      file="${wlp.home}/usr/servers/${server.name}/adc_conf/application_${application.name}.xml"
+      token="parentFirst"
+      value="parentLast"
+    />
+
+  </target>
+  
+  
+  <!--  *******************************************************  -->
+  <!--  ***  Configure the BIRT Viewer application for WAS  ***  -->
+  <!--  *******************************************************  -->
+  <target name="configure.birtviewer.was" depends="init, check.server.name">
+
+    <taskdef name="antstring"
+             classname="curam.util.tools.AntStrings"
+             classpath="${jar.coreinf}:${jar.tools}:${crypto.prop.file.location}" />
+    <antstring to="ear.replaced"
+               oldchar="\"
+               newchar="/"
+               from="${ear.file}"
+               type="replace" />
+
+    <property name="fail.on.error" value="true" />
+    <property name="was.home" value="${sysenv.WAS_HOME}" />
+    <property name="app.prop.location" value="${app.prop.location}" />
+    <property name="ear" value="${ear.replaced}" />
+
+    <echo message="using ${was.home}" />
+
+    <echo message="Configuring ${application.name} (${ear}) on ${server.name}..." />
+
+    <!-- Task for decrypting passwords -->
+    <taskdef name="decrypt"
+             classname="curam.util.tools.AntStrings"
+             classpath="${jar.coreinf}:${jar.tools} " />
+
+    <taskdef name="checkEncrypt"
+             classname="curam.util.tools.AntStrings"
+             classpath="${jar.coreinf}:${jar.tools}" />
+    <!-- Decrypt the runas.password. -->
+    <decrypt to="decrypted.runas.password"
+             from="${runas.password}"
+             type="decrypt" />
+
+    <checkEncrypt to="encrypted.appserver.password"
+                  from="${security.password}"
+                  type="checkEncrypt" />
+
+    <decrypt to="decrypted.appserver.password"
+             from="${security.password}"
+             type="decrypt" />
+
+    <echo message="Stopping ${application.name} on ${server.name}..." />
+    <antcall target="was.wsadmin" inheritAll="true">
+      <param name="line"
+             value="print AdminControl.invoke(AdminControl.queryNames('cell=${cell.name},node=${node.name},type=ApplicationManager,process=${server.name},*'), 'stopApplication', '${application.name}')" />
+      <param name="password" value="${decrypted.appserver.password}" />
+      <param name="username" value="${security.username}" />
+      <param name="error.failure" value="false" />
+    </antcall>
+
+    <!-- we dont need to install the ear as it has already been installed, we just need to configure it
+    <antcall target="was.wsadmin" inheritAll="true">
+      <param name="line"          value="print AdminApp.install('${ear}', '[-server ${server.name} -node ${node.name} -appname ${application.name} -MapRunAsRolesToUsers [[${user.role} ${runas.user} ${decrypted.runas.password}]]]')"/>
+      <param name="password"      value="${decrypted.appserver.password}"/>
+      <param name="username"      value="${security.username}"/>
+      <param name="error.failure" value="${fail.on.error}"/>
+    </antcall>
+    -->
+
+    <echo message="Setting application class loader policy..." />
+    <antcall target="was.wsadmin" inheritAll="true">
+      <param name="line"
+             value="print AdminConfig.modify(AdminConfig.showAttribute(AdminConfig.getid('/Deployment:${application.name}/'), 'deployedObject'), [['warClassLoaderPolicy', 'MULTIPLE']])" />
+      <param name="password" value="${decrypted.appserver.password}" />
+      <param name="username" value="${security.username}" />
+      <param name="error.failure" value="${fail.on.error}" />
+    </antcall>
+
+    <antcall target="was.wsadmin" inheritAll="true">
+      <param name="line"
+             value="print AdminConfig.modify(AdminConfig.showAttribute( AdminConfig.showAttribute (AdminConfig.getid('/Deployment:${application.name}/'), 'deployedObject'), 'classloader'), [['mode', 'PARENT_LAST']])" />
+      <param name="password" value="${decrypted.appserver.password}" />
+      <param name="username" value="${security.username}" />
+      <param name="error.failure" value="${fail.on.error}" />
+    </antcall>
+
+    <echo message="Starting ${application.name} on ${server.name}..." />
+
+    <antcall target="was.wsadmin" inheritAll="true">
+      <param name="line"
+             value="print AdminControl.invoke(AdminControl.queryNames('cell=${cell.name},node=${node.name},type=ApplicationManager,process=${server.name},*'), 'startApplication', '${application.name}')" />
+      <param name="password" value="${decrypted.appserver.password}" />
+      <param name="username" value="${security.username}" />
+      <param name="error.failure" value="${fail.on.error}" />
+    </antcall>
+
+  </target>
+  <!--  ***  this will be moved to SDEJ               ***  -->
+  <!--  ***  END install BIRT Viewer application      ***  -->
+
+  <!--  *************************************  -->
+  <!--  ***  build WAS, WLS and WLP ears  ***  -->
+  <!--  *************************************  -->
+
+  <target name="biapp.BIRTViewerEARs"
+          description="Builds deployable EAR files for WebSphere and WebLogic, use -DCURAM_LIST_PAGE_DEBUG=true to allow access to list page">
+
+    <!-- assumption:the appbuild client.birt will not have have been completed already - so build now -->
+
+    <!-- Check to see if the AppServer.properties file exists -->
+    <echo message="Using properties file '${app.prop.location}'." />
+    <condition property="appserver.properties.exists">
+      <available file="${app.prop.location}" type="file" />
+    </condition>
+    <antcall target="runtime.init" />
+
+    <condition property="vendor.equals.ibm">
+      <equals arg1="${as.vendor}" arg2="ibm" casesensitive="false" />
+    </condition>
+
+    <condition property="vendor.equals.wlp">
+      <equals arg1="${as.vendor}" arg2="wlp" casesensitive="false" />
+    </condition>
+
+    <condition property="vendor.equals.bea">
+      <equals arg1="${as.vendor}" arg2="bea" casesensitive="false" />
+    </condition>
+
+    <echo message="Using properties file as.vendor='${as.vendor}'." />
+
+    <ant antfile="${dir.CURAM_DIR}/BIApp/CuramBIRTViewer/buildscripts/app_BIBuild.xml"
+         target="biapp.standardBIContentbuild"
+         inheritAll="false">
+    </ant>
+
+    <delete failonerror="false" includeemptydirs="true">
+      <fileset dir="${dir.biapp.bld}" includes="**/${dir.temp}/**" />
+    </delete>
+
+    <antcall target="biapp.initdirectories.ear" />
+    <echo message=" " />
+    <echo message="Assembing the BIRT Viewer client pieces for the ear..." />
+
+    <!-- unpack the classes for weblogic, do it now as any eclipse build would 
+         have deleted the classes-->
+    <unzip src="${dir.biapp.components.bicontent.scriptslib}/${biaclasses.jar}"
+           dest="${dir.biapp.webcontent.webinf}/classes">
+      <patternset>
+        <include name="**/*.class" />
+      </patternset>
+    </unzip>
+
+    <manifest file="${dir.biapp.bld.ear}/Manifest.mf">
+      <attribute name="Class-Path" value="
+        properties.jar" />
+      <section name="common">
+        <attribute name="Specification-Title" value="CuramBIRTViewer" />
+        <attribute name="Specification-Vendor" value="IBM Corporation." />
+      </section>
+    </manifest>
+    <antcall target="create.propertiesjar" />
+    <!-- create the base client module -->
+    <jar destfile="${dir.biapp.bld.ear}/${clientmodule}"
+         manifest="${dir.biapp.bld.ear}/Manifest.mf">
+      <fileset dir="${dir.biapp.webcontent}">
+        <include name="**" />
+        <include name="WEB-INF/**" />
+        <exclude name="WEB-INF/bicontent/resources/scriptlib/CryptoConfig.jar" />
+        <exclude name="WEB-INF/platform/configuration/org.eclipse.core**/**" />
+        <exclude name="WEB-INF/platform/plugins/${dir.biapp.drivers.pluginslocation}/*.zip" />
+        <exclude name="WEB-INF/platform/plugins/${dir.biapp.drivers.pluginslocation}/*.zip" />
+        <exclude name="WEB-INF/platform/plugins/${dir.biapp.drivers.pluginslocation}/*.jar" />
+        <exclude name="test.rptdesign" />
+        <exclude name="index.html" />
+        <exclude name="test.jsp" />
+        <exclude name="**/*.keep" />
+        <exclude name="**/*.keep" />
+        <exclude name="**/WEB-INF/ibm-web*.*" />
+        <exclude name="**/WEB-INF/web.xml" />
+        <exclude name="**/WEB-INF/weblogic.xml" />
+        <exclude name="index.html" />
+        <exclude name="index.jsp" />
+      </fileset>
+    </jar>
+    
+    <antcall target="biapp.BIRTViewerEAR.was" />
+    <antcall target="biapp.BIRTViewerEAR.wlp" />
+    <antcall target="biapp.BIRTViewerEAR.wls" />
+
+  </target>
+
+  <target name="biapp.BIRTViewerEAR.was" if="vendor.equals.ibm">
+    
+    <antcall target="message" inheritall="false">
+      <param name="prm.msg" value="Starting Curam BIRT Viewer websphereEAR" />
+    </antcall>
+    
+    <!-- copy for WAS-->
+    <copy failonerror="true"
+          todir="${dir.biapp.bld.ear.was}/${dir.temp}"
+          file="${dir.biapp.bld.ear}/${clientmodule}"
+          overwrite="true" />
+   
+    <delete file="${dir.biapp.bld.ear}/${clientmodule}"
+            failonerror="false"
+            quiet="true" />
+    
+    <!-- copy the meta-inf files to the WAS build folder, e.g. application.xml   -->
+    <copy toDir="${dir.biapp.bld.ear.was}/${dir.temp}">
+      <fileset dir="${dir.biapp.ear.was}">
+        <exclude name="META-INF/*.xmi" />
+        <exclude name="META-INF/was.policy" />
+        <include name="META-INF/*.*" />
+      </fileset>
+    </copy>
+    <!-- END: copy the meta-inf files to the WAS build folder, e.g. application.xml   -->
+    
+    <!-- Start: enable JavaSE security on WAS, copy to the WAS build folder   -->
+    <!-- amend the BIRT config.ini for use in WAS   -->
+    <!-- stack 007: test to see if this is still required-->
+    <copy toDir="${dir.biapp.bld.ear.was}/${dir.temp}">
+      <fileset dir="${dir.biapp.webcontent}">
+        <include name="${dir.biapp.BIRT.config}" />
+      </fileset>
+    </copy>
+    
+    <!-- this must be present or you get an OGSI startup error-->
+    <concat destfile="${dir.biapp.bld.ear.was}/${dir.temp}/${dir.biapp.BIRT.config}"
+            append="true">
+      <fileset file="${dir.biapp.ear.was}/${file.config.ini}" />
+    </concat>
+
+    <!-- add ibm bindings files for use in WAS -->
+    <copy toDir="${dir.biapp.bld.ear.was}/${dir.temp}">
+      <fileset dir="${dir.biapp.ear.was}/ClientModule">
+        <include name="WEB-INF/ibm*.xml" />
+        <include name="WEB-INF/ibm*.xmi" />
+      </fileset>
+    </copy>
+    
+    <!-- checked: add web security to the web.xml for use in WAS - it will not work in Tomcat   -->
+    <!-- checked: dir.biapp.ear.was.web.security contains the security stanza -->
+    <loadfile property="was.web.security.stanza"
+              srcFile="${dir.biapp.ear.was.web.security}"
+              failonerror="false" />
+
+    <copy file="${dir.biapp.webcontent.core.webxml}"
+          toFile="${dir.biapp.bld.ear.was}/${dir.temp}/WEB-INF/web.xml">
+      <filterset>
+        <filter token="WEB_SECURITY" value="${was.web.security.stanza}" />
+        <filter token="CURAM_LIST_PAGE_VALUE"
+                value="${CURAM_LIST_PAGE_DEBUG}" />
+      </filterset>
+    </copy>
+
+    <jar destfile="${dir.biapp.bld.ear.was}/${dir.temp}/${clientmodule}"
+         update="true">
+      <fileset dir="${dir.biapp.bld.ear.was}/${dir.temp}">
+        <include name="${dir.biapp.BIRT.config}" />
+      </fileset>
+      <fileset dir="${dir.biapp.bld.ear.was}/${dir.temp}">
+        <include name="WEB-INF/ibm*.xml" />
+        <include name="WEB-INF/ibm*.xmi" />
+        <include name="WEB-INF/web.xml" />
+      </fileset>
+    </jar>
+    <!-- END: enable web security and JavaSE security on WAS, copy to the was build folder   -->
+    
+    <!-- Start: create the WAS ear file -->
+    <jar destfile="${dir.biapp.bld.ear.was}/CuramBIRTViewer.ear">
+      <fileset file="${dir.biapp.bld.ear.was}/${dir.temp}/${clientmodule}" />
+      <fileset file="${dir.biapp.bld.ear.was}/${dir.temp}/properties.jar" />
+
+      <fileset dir="${dir.biapp.bld.ear.was}/${dir.temp}">
+        <include name="META-INF/*.*" />
+      </fileset>
+
+    </jar>
+    <!-- END: create the WAS ear file -->
+    
+    <!-- clean up -->
+    <mkdir dir="${sysenv.SERVER_DIR}/build/ear" />
+
+    <antcall target="clean.was" />
+
+    <antcall target="message" inheritall="false" inheritRefs="false">
+      <param name="prm.msg" value="Ending Curam BIRT Viewer websphereEAR" />
+    </antcall>
+    
+  </target>
+  
+  <target name="biapp.BIRTViewerEAR.wlp" if="vendor.equals.wlp">
+    
+    <antcall target="message" inheritall="false">
+      <param name="prm.msg" value="Starting Curam BIRT Viewer libertyEAR" />
+    </antcall>
+    
+    <!-- copy for WLP-->
+	  <copy failonerror="true"
+	        todir="${dir.biapp.bld.ear.wlp}/${dir.temp}"
+	        file="${dir.biapp.bld.ear}/${clientmodule}"
+	        overwrite="true" />
+   
+    <delete file="${dir.biapp.bld.ear}/${clientmodule}"
+            failonerror="false"
+            quiet="true" />
+    
+    <!-- copy the meta-inf files to the WLP build folder, e.g. application.xml   -->
+    <copy toDir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+      <fileset dir="${dir.biapp.ear.wlp}">
+        <exclude name="META-INF/*.xmi" />
+        <exclude name="META-INF/was.policy" />
+        <include name="META-INF/*.*" />
+      </fileset>
+    </copy>
+    <!-- END: copy the meta-inf files to the WLP build folder, e.g. application.xml   -->
+    
+    <!-- Start: enable JavaSE security on WLP, copy to the WLP build folder   -->
+    <!-- amend the BIRT config.ini for use in WLP   -->
+    <copy toDir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+      <fileset dir="${dir.biapp.webcontent}">
+        <include name="${dir.biapp.BIRT.config}" />
+      </fileset>
+    </copy>
+    
+    <!-- this must be present or you get an OGSI startup error-->
+    <concat destfile="${dir.biapp.bld.ear.wlp}/${dir.temp}/${dir.biapp.BIRT.config}"
+            append="true">
+      <fileset file="${dir.biapp.ear.wlp}/${file.config.ini}" />
+    </concat>
+    
+    <!-- add ibm bindings files for use in WLP -->
+    <copy toDir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+      <fileset dir="${dir.biapp.ear.wlp}/ClientModule">
+        <include name="WEB-INF/ibm*.xml" />
+        <include name="WEB-INF/ibm*.xmi" />
+      </fileset>
+    </copy>
+    
+    <!-- Start: enable JavaSE security on WLP, copy to the WLS build folder   -->
+    <!-- checked: dir.biapp.ear.wlp.web.security contains the security stanza -->
+    <loadfile property="wlp.web.security.stanza"
+              srcFile="${dir.biapp.ear.wlp.web.security}"
+              failonerror="false" />
+
+    <copy file="${dir.biapp.webcontent.core.webxml}"
+          toFile="${dir.biapp.bld.ear.wlp}/${dir.temp}/WEB-INF/web.xml">
+      <filterset>
+        <filter token="WEB_SECURITY" value="${wlp.web.security.stanza}" />
+        <filter token="CURAM_LIST_PAGE_VALUE"
+                value="${CURAM_LIST_PAGE_DEBUG}" />
+      </filterset>
+    </copy>
+    
+    <jar destfile="${dir.biapp.bld.ear.wlp}/${dir.temp}/${clientmodule}"
+         update="true">
+      <fileset dir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+        <include name="${dir.biapp.BIRT.config}" />
+      </fileset>
+      <fileset dir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+        <include name="WEB-INF/ibm*.xml" />
+        <include name="WEB-INF/ibm*.xmi" />
+        <include name="WEB-INF/web.xml" />
+      </fileset>
+    </jar>
+    <!-- end: enable JavaSE security on WLP, copy to the WLS build folder   -->
+    
+    <!-- Start: create the WLP ear file -->
+    <jar destfile="${dir.biapp.bld.ear.wlp}/CuramBIRTViewer.ear">
+      <fileset file="${dir.biapp.bld.ear.wlp}/${dir.temp}/${clientmodule}" />
+      <fileset file="${dir.biapp.bld.ear.wlp}/${dir.temp}/properties.jar" />
+
+      <fileset dir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+        <include name="META-INF/*.*" />
+      </fileset>
+
+    </jar>
+    <!-- END: create the WLP ear file -->
+    
+    <!-- clean up -->
+    <mkdir dir="${sysenv.SERVER_DIR}/build/ear" />
+
+    <antcall target="clean.wlp" />
+
+    <antcall target="message" inheritall="false" inheritRefs="false">
+      <param name="prm.msg" value="Ending Curam BIRT Viewer libertyEAR" />
+    </antcall>
+    
+  </target>
+  
+  <target name="biapp.BIRTViewerEAR.wls" if="vendor.equals.bea">
+    
+    <antcall target="message" inheritall="false">
+      <param name="prm.msg" value="Starting Curam BIRT Viewer weblogicEAR" />
+    </antcall>
+    
+    <!-- copy for WLS-->
+    <copy failonerror="true"
+          todir="${dir.biapp.bld.ear.wls}/${dir.temp}"
+          file="${dir.biapp.bld.ear}/${clientmodule}"
+          overwrite="true" />
+
+    <delete file="${dir.biapp.bld.ear}/${clientmodule}"
+            failonerror="false"
+            quiet="true" />
+    
+    <!-- copy the meta-inf files to the WLS build folder, e.g. application.xml   -->
+    <copy toDir="${dir.biapp.bld.ear.wls}/${dir.temp}">
+      <fileset dir="${dir.biapp.ear.wls}">
+        <include name="META-INF/*" />
+      </fileset>
+    </copy>
+    <!-- END: copy the meta-inf files to the WLS build folder, e.g. application.xml   -->
+    
+    <!-- Start: enable JavaSE security on WLS, copy to the WLS build folder   -->
+    <!-- add web security to the web.xml for use in WLS - it will not work in Tomcat   -->
+    <!-- checking: in progress-->
+    <copy file="${dir.biapp.ear.wls.web.weblogic.xml}"
+          toFile="${dir.biapp.bld.ear.wls}/${dir.temp}/WEB-INF/weblogic.xml">
+      <!-- Workaround for Ant 1.8.1 issue 49261 -->
+      <filterset>
+        <filter token="NoSuchTokenAnywhere123456789"
+                value="NoSuchTokenAnywhere123456789" />
+      </filterset>
+    </copy>
+
+    <!-- checked: load the secutiry stanza -->
+    <loadfile property="wls.web.security.stanza"
+              srcFile="${dir.biapp.ear.wls.web.security}"
+              failonerror="false" />
+
+    <!-- checked: add the secutiry stanza to web.xml -->
+    <!-- set CURAM_LIST_PAGE_VALUE to true for Tomcat based debugging, value of true is case insensitive -->
+
+    <copy file="${dir.biapp.webcontent.core.webxml}"
+          toFile="${dir.biapp.bld.ear.wls}/${dir.temp}/WEB-INF/web.xml">
+      <filterset>
+        <filter token="WEB_SECURITY" value="${wls.web.security.stanza}" />
+        <filter token="CURAM_LIST_PAGE_VALUE"
+                value="${CURAM_LIST_PAGE_DEBUG}" />
+      </filterset>
+    </copy>
+
+    <!-- stack 007: also copy to  weblogic -->
+    <copy toDir="${dir.biapp.bld.ear.wls}/${dir.temp}">
+      <fileset dir="${dir.biapp.webcontent}">
+        <include name="${dir.biapp.BIRT.config}" />
+      </fileset>
+    </copy>
+    <!-- stack 007:this setting cant be there for weblogic-->
+    <!-- the config.ini file is empty-->
+    <concat destfile="${dir.biapp.bld.ear.wls}/${dir.temp}/${dir.biapp.BIRT.config}"
+            append="true">
+      <fileset file="${dir.biapp.ear.wls}/${file.config.ini}" />
+    </concat>
+
+    <!-- also include the IBM web default host settings   -->
+    <jar destfile="${dir.biapp.bld.ear.wls}/${dir.temp}/${clientmodule}"
+         update="true">
+      <fileset dir="${dir.biapp.bld.ear.wls}/${dir.temp}">
+        <include name="WEB-INF/ibm-web*.*" />
+        <include name="WEB-INF/web.xml" />
+        <include name="WEB-INF/weblogic.xml" />
+      </fileset>
+    </jar>
+    <!-- END: enable web security on WLS -->
+    
+    <!-- Start: create the WLS ear file-->
+    <jar destfile="${dir.biapp.bld.ear.wls}/CuramBIRTViewer.ear">
+      <fileset file="${dir.biapp.bld.ear.wls}/${dir.temp}/${clientmodule}" />
+      <fileset file="${dir.biapp.bld.ear.wls}/${dir.temp}/properties.jar" />
+      <fileset dir="${dir.biapp.bld.ear.wls}/${dir.temp}">
+        <include name="META-INF/*.*" />
+      </fileset>
+    </jar>
+    <!-- End: create the WLS ear file -->
+    
+    <!-- clean up -->
+	  <mkdir dir="${sysenv.SERVER_DIR}/build/ear" />
+	
+	  <antcall target="clean.wls" />
+	
+	  <antcall target="message" inheritall="false" inheritRefs="false">
+	    <param name="prm.msg" value="Ending Curam BIRT Viewer weblogicEAR" />
+	  </antcall>
+    
+  </target>
+  
+
+  <!-- clean up any temporary files -->
+  <target name="clean.was" if="vendor.equals.ibm">
+    <copy toDir="${sysenv.SERVER_DIR}/build/ear">
+      <fileset dir="${dir.biapp.bld.ear}">
+        <include name="WAS/*.ear" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="clean.wlp" if="vendor.equals.wlp">
+    <copy toDir="${sysenv.SERVER_DIR}/build/ear">
+      <fileset dir="${dir.biapp.bld.ear}">
+        <include name="WLP/*.ear" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="clean.wls" if="vendor.equals.bea">
+    <copy toDir="${sysenv.SERVER_DIR}/build/ear">
+      <fileset dir="${dir.biapp.bld.ear}">
+        <include name="WLS/*.ear" />
+      </fileset>
+    </copy>
+  </target>
+  <!-- END : clean up any temporary files -->
+
+
+  <!--  ***************************************  -->
+  <!--  ***  Package properties into a jar  ***  -->
+  <!--  ***************************************  -->
+
+  <target name="create.propertiesjar">
+
+    <copy todir="${dir.biapp.bld.ear}">
+      <fileset dir="${prop.file.location}" casesensitive="false">
+        <include name="*.properties" />
+        <exclude name="*Shortnames.properties" />
+        <exclude name="Application.properties" />
+        <exclude name="AppServer.properties" />
+        <exclude name="WebsphereApplication.properties" />
+        <exclude name="WLSApplication.properties" />
+        <exclude name="WLSApplication.properties" />
+        <exclude name="Bootstrap.properties" />
+      </fileset>
+      <fileset dir="${prop.file.location}" casesensitive="false">
+        <include name="*.properties" />
+        <exclude name="*Shortnames.properties" />
+        <exclude name="Application.properties" />
+        <exclude name="AppServer.properties" />
+        <exclude name="WebsphereApplication.properties" />
+        <exclude name="WLSApplication.properties" />
+        <exclude name="Bootstrap.properties" />
+      </fileset>
+    </copy>
+
+    <!-- Include other bootstrap properties. -->
+    <loadfile failonerror="false"
+              property="all.properties"
+              srcFile="${prop.file.location}/Bootstrap.properties">
+      <filterchain>
+        <tokenfilter>
+          <replaceregex pattern="#(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.db.username(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.db.password(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.db.servername(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.db.serverport(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.db.name(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.rmi.java.naming.factory.initial(.*)"
+                        replace="" />
+          <replaceregex pattern="(.*)curam.rmi.java.naming.provider.url(.*)"
+                        replace="" />
+          <replaceregex pattern="(.*)curam.db.java.naming.provider.url(.*)"
+                        replace="" />
+          <replaceregex pattern="(.*)curam.db.java.naming.factory.initial(.*)"
+                        replace="" />
+          <replaceregex pattern="(.*)curam.db.datasource.jndi(.*)" replace="" />
+          <replaceregex pattern="(.*)curam.environment.as.vendor(.*)"
+                        replace="" />
+          <replaceregex pattern="(.*)curam.environment.tnameserv.port(.*)"
+                        replace="" />
+          <replaceregex pattern="(.*)curam.environment.bindings.location(.*)"
+                        replace="" />
+        </tokenfilter>
+      </filterchain>
+    </loadfile>
+
+    <!-- Create the bootstrap.properties file for WAS-->
+    <echo file="${dir.biapp.bld.ear.was}/${dir.temp}/Bootstrap.properties">curam.environment.as.vendor=IBM
+    ${all.properties}
+        </echo>
+
+    <!-- Create the bootstrap.properties file for WLP-->
+    <echo file="${dir.biapp.bld.ear.wlp}/${dir.temp}/Bootstrap.properties">curam.environment.as.vendor=WLP
+    ${all.properties}
+        </echo>
+
+    <!-- Create the bootstrap.properties file for WLS-->
+    <echo file="${dir.biapp.bld.ear.wls}/${dir.temp}/Bootstrap.properties">curam.environment.as.vendor=BEA
+    ${all.properties}
+        </echo>
+
+    <!-- Create the WAS properties.jar -->
+    <jar destfile="${dir.biapp.bld.ear.was}/${dir.temp}/properties.jar"
+         manifest="${dir.biapp.bld.ear}/Manifest.mf">
+      <fileset dir="${dir.biapp.bld.ear}">
+        <include name="*.properties" />
+        <exclude name="Bootstrap.properties" />
+      </fileset>
+      <fileset dir="${dir.biapp.bld.ear.was}/${dir.temp}">
+        <include name="Bootstrap.properties" />
+      </fileset>
+    </jar>
+
+    <!-- Create the WLP properties.jar -->
+    <jar destfile="${dir.biapp.bld.ear.wlp}/${dir.temp}/properties.jar"
+         manifest="${dir.biapp.bld.ear}/Manifest.mf">
+      <fileset dir="${dir.biapp.bld.ear}">
+        <include name="*.properties" />
+        <exclude name="Bootstrap.properties" />
+      </fileset>
+      <fileset dir="${dir.biapp.bld.ear.wlp}/${dir.temp}">
+        <include name="Bootstrap.properties" />
+      </fileset>
+    </jar>
+
+    <!-- Create the properties.jar -->
+    <jar destfile="${dir.biapp.bld.ear.wls}/${dir.temp}/properties.jar"
+         manifest="${dir.biapp.bld.ear}/Manifest.mf">
+      <fileset dir="${dir.biapp.bld.ear}">
+        <include name="*.properties" />
+        <exclude name="Bootstrap.properties" />
+      </fileset>
+      <fileset dir="${dir.biapp.bld.ear.wls}/${dir.temp}">
+        <include name="Bootstrap.properties" />
+      </fileset>
+    </jar>
+
+
+  </target >
+
+</project>

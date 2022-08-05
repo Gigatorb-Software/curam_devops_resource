@@ -1,0 +1,3106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?curam-deprecated Since Curam 7.0.0.0, This functionality forms part of a feature that is no longer relevant to the product strategy and will not be replaced. ?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
+    <simple-property-list name="includeResource">
+        <value>properties/HCRInterventionRequired</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <method name="initialize"><![CDATA[i=0;
+]]></method>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <list-property name="libraries">
+        <structure>
+            <property name="fileName">library/CEFLibrary.rptlibrary</property>
+            <property name="namespace">CEFLibrary</property>
+        </structure>
+    </list-property>
+    <parameters>
+        <scalar-parameter name="CasePartRolePrimary" id="896">
+            <property name="hidden">true</property>
+            <text-property name="promptText">PRI</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">PRI</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="CasePartRoleMember" id="897">
+            <property name="hidden">true</property>
+            <text-property name="promptText">MEM</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">MEM</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ConcernRoleProspectPerson" id="898">
+            <property name="hidden">true</property>
+            <text-property name="promptText">RL7</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">RL7</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ApplCaseStatusOpen" id="903">
+            <property name="hidden">true</property>
+            <text-property name="promptText">ACS27000</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">ACS27000</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="CaseHeaderStatusOpen" id="904">
+            <property name="hidden">true</property>
+            <text-property name="promptText">CS4</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">CS4</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="VerificationStatusNotVerified" id="905">
+            <property name="hidden">true</property>
+            <text-property name="promptText">VST2</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">VST2</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ApplicationCaseStatusAwaitResol" id="911">
+            <property name="hidden">true</property>
+            <text-property name="promptText">ACS27003</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">ACS27003</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="IntCaseTypeHCRCase" id="917">
+            <property name="hidden">true</property>
+            <text-property name="promptText">CT26301</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">CT26301</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ProcessNameProcIntApp" id="924">
+            <property name="hidden">true</property>
+            <text-property name="promptText">ProcessIntakeApplication</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">ProcessIntakeApplication</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="WdoNameIntAppDets" id="926">
+            <property name="hidden">true</property>
+            <text-property name="promptText">IntakeApplicationDetails</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">IntakeApplicationDetails</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="IntakeAppTypeId12000" id="927">
+            <property name="hidden">true</property>
+            <text-property name="promptText">12000</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">integer</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">12000</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ProcessNameProgAuth" id="932">
+            <property name="hidden">true</property>
+            <text-property name="promptText">PROGRAMAUTHORIZATION</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">PROGRAMAUTHORIZATION</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ProcessNameStrThrAuth" id="933">
+            <property name="hidden">true</property>
+            <text-property name="promptText">StriaghtThroughAuthorise</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">StriaghtThroughAuthorise</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="p_ReportFromDate" id="992">
+            <property name="hidden">false</property>
+            <text-property name="helpText">dd/mm/yyyy hh:mm:ss a (01/31/2014 01:01:01 AM)</text-property>
+            <text-property name="promptText">Report From Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">01/31/2014 01:01:01 AM</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <property name="autoSuggestThreshold">1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="p_ReportToDate" id="940">
+            <property name="hidden">false</property>
+            <text-property name="helpText">dd/mm/yyyy hh:mm:ss a (01/31/2014 01:01:01 AM)</text-property>
+            <text-property name="promptText">Report To Date</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">dateTime</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">01/31/2114 01:01:01 AM</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <property name="autoSuggestThreshold">1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ApplCaseStatusAuthFailed" id="941">
+            <property name="hidden">true</property>
+            <text-property name="promptText">ACS27006</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">ACS27006</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="IntApplicationStatusDisposed" id="942">
+            <property name="hidden">true</property>
+            <text-property name="promptText">IAST1002</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">IAST1002</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ProcessNameEvidBrkrRolBack" id="943">
+            <property name="hidden">true</property>
+            <text-property name="promptText">EVIDENCE_BROKER_ROLLBACK</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">EVIDENCE_BROKER_ROLLBACK</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="ApplCaseStatusClosed" id="944">
+            <property name="hidden">true</property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">ACS27002</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="CaseHeaderStatusClosed" id="945">
+            <property name="hidden">true</property>
+            <text-property name="promptText">CS3</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">CS3</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="CaseTypeCodeCIntCase" id="985">
+            <property name="hidden">true</property>
+            <text-property name="promptText">CT5</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">CT5</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="RecordStatusActive" id="986">
+            <property name="hidden">true</property>
+            <text-property name="promptText">RST1</text-property>
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">RST1</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="UnResolvedStatus" id="998">
+            <property name="hidden">true</property>
+            <text-property name="promptText">MS1</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">MS1</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="p_ProgType_InsuranceAffordability" id="999">
+            <property name="hidden">true</property>
+            <text-property name="promptText">26301</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">26301</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <property name="autoSuggestThreshold">1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="p_ProgType_ESI" id="1000">
+            <property name="hidden">true</property>
+            <text-property name="promptText">26314</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">26314</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <property name="autoSuggestThreshold">1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="p_ProgType_EXEMPTION" id="1001">
+            <property name="hidden">true</property>
+            <text-property name="promptText">26317</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">integer</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">26317</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="p_ProgType_UQHP" id="1002">
+            <property name="hidden">true</property>
+            <text-property name="promptText">26318</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">26318</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <property name="autoSuggestThreshold">1</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+        <scalar-parameter name="CaseTypeCodeAplCase" id="1003">
+            <property name="hidden">true</property>
+            <text-property name="promptText">CT10201</text-property>
+            <property name="valueType">static</property>
+            <property name="isRequired">false</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <simple-property-list name="defaultValue">
+                <value type="constant">CT10201</value>
+            </simple-property-list>
+            <property name="paramType">simple</property>
+            <property name="concealValue">false</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="CuramDB" id="7"
+ extends="CEFLibrary.CuramDB"/>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="ApplicationsReceivd" id="997">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">BusinessProgramName</property>
+                    <expression name="expression">if (reportContext.getMessage(row["CATEGORY"],reportContext.getLocale())==null)&#13;
+row["CATEGORY"];&#13;
+else&#13;
+reportContext.getMessage(row["CATEGORY"],reportContext.getLocale());</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">KPI</property>
+                    <text-property name="displayName">KPI</text-property>
+                    <text-property name="heading">KPI</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">CATEGORY</property>
+                    <text-property name="displayName">CATEGORY</text-property>
+                    <text-property name="heading">CATEGORY</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">TOTAL</property>
+                    <text-property name="displayName">TOTAL</text-property>
+                    <text-property name="heading">TOTAL</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">p_Q23TypeCode_1</property>
+                    <property name="paramName">CasePartRolePrimary</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23TypeCode_2</property>
+                    <property name="paramName">CasePartRoleMember</property>
+                    <property name="dataType">string</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ConcernRoleType</property>
+                    <property name="paramName">ConcernRoleProspectPerson</property>
+                    <property name="dataType">string</property>
+                    <property name="position">3</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ProgType1</property>
+                    <property name="paramName">p_ProgType_InsuranceAffordability</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">4</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ProgType2</property>
+                    <property name="paramName">p_ProgType_ESI</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">5</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ProgType3</property>
+                    <property name="paramName">p_ProgType_EXEMPTION</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">6</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ProgType4</property>
+                    <property name="paramName">p_ProgType_UQHP</property>
+                    <property name="dataType">integer</property>
+                    <property name="position">7</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ApplCaseStatus</property>
+                    <property name="paramName">ApplCaseStatusOpen</property>
+                    <property name="dataType">string</property>
+                    <property name="position">8</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23CaseHeaserStatusCode</property>
+                    <property name="paramName">CaseHeaderStatusOpen</property>
+                    <property name="dataType">string</property>
+                    <property name="position">9</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="dataType">dateTime</property>
+                    <property name="position">10</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q23ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">11</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24CaseHeaderTypeCode</property>
+                    <property name="paramName">CaseTypeCodeAplCase</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">12</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24VerificationStatus</property>
+                    <property name="paramName">VerificationStatusNotVerified</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">13</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24CaseHeaderStatusCode</property>
+                    <property name="paramName">CaseHeaderStatusOpen</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">14</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24ProgType1</property>
+                    <property name="paramName">p_ProgType_InsuranceAffordability</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">15</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24ProgType2</property>
+                    <property name="paramName">p_ProgType_ESI</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">16</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24ProgType3</property>
+                    <property name="paramName">p_ProgType_EXEMPTION</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">17</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24ProgType4</property>
+                    <property name="paramName">p_ProgType_UQHP</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">18</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">19</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">20</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bTypeCode_1</property>
+                    <property name="paramName">CasePartRolePrimary</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">21</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bTypeCode_2</property>
+                    <property name="paramName">CasePartRoleMember</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">22</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bConcernRoleType</property>
+                    <property name="paramName">ConcernRoleProspectPerson</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">23</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bProgType1</property>
+                    <property name="paramName">p_ProgType_InsuranceAffordability</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">24</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bProgType2</property>
+                    <property name="paramName">p_ProgType_ESI</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">25</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bProgType3</property>
+                    <property name="paramName">p_ProgType_EXEMPTION</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">26</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bProgType4</property>
+                    <property name="paramName">p_ProgType_UQHP</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">27</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bApplCaseStatus</property>
+                    <property name="paramName">ApplCaseStatusOpen</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">28</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bCaseHeaderStatusCode</property>
+                    <property name="paramName">CaseHeaderStatusOpen</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">29</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bFromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">30</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q24bToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">31</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25ApplCaseStatus</property>
+                    <property name="paramName">ApplicationCaseStatusAwaitResol</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">32</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">33</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">34</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25ProgType1</property>
+                    <property name="paramName">p_ProgType_InsuranceAffordability</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">35</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25ProgType2</property>
+                    <property name="paramName">p_ProgType_ESI</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">36</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25ProgType3</property>
+                    <property name="paramName">p_ProgType_EXEMPTION</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">37</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q25ProgType4</property>
+                    <property name="paramName">p_ProgType_UQHP</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">38</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">39</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">40</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26ProgType1</property>
+                    <property name="paramName">p_ProgType_InsuranceAffordability</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">41</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26ProgType2</property>
+                    <property name="paramName">p_ProgType_ESI</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">42</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26ProgType3</property>
+                    <property name="paramName">p_ProgType_EXEMPTION</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">43</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26ProgType4</property>
+                    <property name="paramName">p_ProgType_UQHP</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">44</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26ApplCaseStatusCode</property>
+                    <property name="paramName">ApplCaseStatusClosed</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">45</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26IntCaseType</property>
+                    <property name="paramName">IntCaseTypeHCRCase</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">46</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q26CaseTypeCode</property>
+                    <property name="paramName">CaseTypeCodeCIntCase</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">47</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28CaseHeaderStatus</property>
+                    <property name="paramName">CaseHeaderStatusOpen</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">48</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28ApplCaseStatus</property>
+                    <property name="paramName">ApplCaseStatusAuthFailed</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">49</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">50</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">51</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28ProgType1</property>
+                    <property name="paramName">p_ProgType_InsuranceAffordability</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">52</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28ProgType2</property>
+                    <property name="paramName">p_ProgType_ESI</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">53</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28ProgType3</property>
+                    <property name="paramName">p_ProgType_EXEMPTION</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">54</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q28ProgType4</property>
+                    <property name="paramName">p_ProgType_UQHP</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">-5</property>
+                    <property name="position">55</property>
+                    <property name="isOptional">true</property>
+                    <property name="allowNull">true</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">KPI</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">CATEGORY</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">TOTAL</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">BusinessProgramName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="beforeOpen"><![CDATA[
+]]></method>
+            <method name="beforeClose"><![CDATA[
+]]></method>
+            <property name="dataSource">CuramDB</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">KPI</property>
+                    <property name="nativeName">KPI</property>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">CATEGORY</property>
+                    <property name="nativeName">CATEGORY</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">TOTAL</property>
+                    <property name="nativeName">TOTAL</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[SELECT InterventionRequired.kpi kpi,
+  InterventionRequired.category category,
+  total total
+FROM
+  ( -- 23:outstanding registrations
+SELECT 23 KPI,
+    'outstanding.registrations' CATEGORY,
+    COUNT(DISTINCT IC.caseid) TOTAL
+  FROM APPLICATIONCASE AC
+  INNER JOIN INTAKEAPPLICATION IA
+  ON IA.reference = AC.applicationreference    
+  INNER JOIN IntakeProgramApplication ipa 
+  ON ipa.intakeApplicationID = ia.intakeApplicationID
+  INNER JOIN CASEHEADER IC
+  ON AC.applicationcaseid = IC.caseid
+  INNER JOIN CASEPARTICIPANTROLE CPR
+  ON IC.caseid      = CPR.caseid
+  AND CPR.typecode IN ( ?, ?)
+  INNER JOIN CONCERNROLE CR
+  ON CPR.participantroleid = CR.concernroleid
+  AND CR.concernroletype   =?
+    --  prospect person
+  WHERE ipa.ProgramTypeId IN ( ?, ?, ?, ?)  --  InsuranceAffordability,ESI,EXEMPTION,UQHP  
+  AND AC.status                    = ?
+  AND IC.statuscode                = ? -- open
+  AND IA.SUBMITTEDDATETIME  BETWEEN ? AND ? 
+  UNION ALL
+  -- 24:outstanding verifications -
+   SELECT 24 KPI,
+    'outstanding.verifications' CATEGORY,
+    COUNT(DISTINCT ov.caseid) TOTAL
+  FROM
+    (SELECT CASEHEADER.caseid
+     FROM VERIFICATION,
+          VDIEDLINK,
+          EVIDENCEDESCRIPTOR,
+          CASEHEADER,
+          APPLICATIONCASE,
+		  INTAKEAPPLICATION,
+		  INTAKEPROGRAMAPPLICATION
+     WHERE CASEHEADER.casetypecode                 = ?
+     AND VERIFICATION.verificationstatus = ?
+      AND CASEHEADER.statuscode              = ? -- open
+      --VST2' represents the status for 'Outstanding verifications'
+     AND VERIFICATION.vdiedlinkid                = VDIEDLINK.vdiedlinkid
+     AND VDIEDLINK.evidencedescriptorid          = EVIDENCEDESCRIPTOR.evidencedescriptorid
+     AND CASEHEADER.caseid                       = EVIDENCEDESCRIPTOR.caseid
+     AND APPLICATIONCASE.applicationcaseid       = CASEHEADER.caseid
+     --'CT10201' denotes the case type 'Application Case'
+    
+     AND INTAKEAPPLICATION.reference = APPLICATIONCASE.applicationreference
+	 AND INTAKEPROGRAMAPPLICATION.intakeApplicationID = INTAKEAPPLICATION.intakeApplicationID
+	 AND INTAKEPROGRAMAPPLICATION.ProgramTypeId IN ( ?, ?, ?, ? ) --  InsuranceAffordability,ESI,EXEMPTION,UQHP
+     AND INTAKEAPPLICATION.SUBMITTEDDATETIME  BETWEEN ? AND ?	 
+     MINUS
+     SELECT IC.caseid
+     FROM APPLICATIONCASE AC
+        INNER JOIN INTAKEAPPLICATION IA
+           ON IA.reference = AC.applicationreference  	 
+	   INNER JOIN IntakeProgramApplication ipa 
+	      ON ipa.intakeApplicationID = ia.intakeApplicationID	   		   
+       INNER JOIN CASEHEADER IC
+          ON AC.applicationcaseid = IC.caseid
+       INNER JOIN CASEPARTICIPANTROLE CPR
+          ON IC.caseid      = CPR.caseid
+          AND CPR.typecode IN ( ?, ?)
+       INNER JOIN CONCERNROLE CR
+          ON CPR.participantroleid = CR.concernroleid
+          AND CR.concernroletype   =?
+       --  prospect person
+       WHERE ipa.ProgramTypeId IN ( ?, ?, ?, ?) --  InsuranceAffordability,ESI,EXEMPTION,UQHP
+       AND AC.status                    = ?
+       AND IC.statuscode                = ? -- open
+       AND IA.SUBMITTEDDATETIME  BETWEEN ? AND ?
+    ) ov
+     UNION ALL
+  -- failed.validations=awaiting resolution
+  -- 25:Invalid application
+  SELECT 25 KPI ,
+    'failed.validations' CATEGORY,
+    COUNT(AC.applicationcaseid) INVALIDAPPLICATIONS
+  FROM APPLICATIONCASE ac
+    INNER JOIN INTAKEAPPLICATION IA
+      ON IA.reference = AC.applicationreference      
+	INNER JOIN IntakeProgramApplication ipa 
+	  ON ipa.intakeApplicationID = ia.intakeApplicationID  	  
+  WHERE AC.status           = ?
+  AND IA.SUBMITTEDDATETIME BETWEEN ? AND ?
+  AND ipa.ProgramTypeId IN ( ?, ?, ?, ?) --  InsuranceAffordability,ESI,EXEMPTION,UQHP
+ UNION ALL
+  -- 26:failed to activate, rolled auto-active and auto-accept into one
+SELECT  26 KPI
+,       'Failed.to.broker.evidence.allevidencenotactive' CATEGORY
+,       COUNT(distinct ac.applicationcaseid)
+FROM    APPLICATIONCASE ac
+INNER JOIN INTAKEAPPLICATION IA ON IA.reference = AC.applicationreference  
+INNER JOIN IntakeProgramApplication ipa ON ipa.intakeApplicationID = ia.intakeApplicationID
+INNER JOIN CASERELATIONSHIP cr ON ac.applicationcaseid = cr.caseid 
+INNER JOIN CASEHEADER ch ON cr.relatedcaseid = ch.caseid
+LEFT OUTER JOIN PROGRAMGROUPDETERMINATION pgd ON ch.caseid = pgd.caseid
+WHERE   IA.SUBMITTEDDATETIME  BETWEEN ? AND ?
+AND     ipa.ProgramTypeId IN ( ?, ?, ?, ? )         --  InsuranceAffordability,ESI,EXEMPTION,UQHP
+AND     ac.STATUS=?                                 -- Application Case Status is Closed
+AND     ch.integratedcasetype = ?                   -- either HCR Case or Insurance Affordability
+AND     ch.CASETYPECODE=?                           -- Integrated Case
+-- we can't use active which is what we were trying to use because they don't have any active records - they are all either open or closed
+AND     ch.statuscode = ?                           -- Open
+AND     pgd.caseid IS NULL                          -- There are NO determination records for the IC  
+UNION ALL
+  SELECT 28 KPI,
+    'Failed.to.broker.evidence.authorisationfailed' CATEGORY,
+    COUNT(ac.applicationcaseid) TOTAL
+  FROM APPLICATIONCASE AC
+    INNER JOIN INTAKEAPPLICATION IA
+      ON IA.reference = AC.applicationreference      
+	 INNER JOIN IntakeProgramApplication ipa 
+	   ON ipa.intakeApplicationID = ia.intakeApplicationID  	  
+  WHERE ac.status           = ?
+  AND IA.SUBMITTEDDATETIME  BETWEEN ? AND ?
+  AND ipa.ProgramTypeId IN ( ?, ?, ?, ? )         --  InsuranceAffordability,ESI,EXEMPTION,UQHP
+  ) InterventionRequired
+ORDER BY kpi
+]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>12</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>13</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>14</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>15</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>16</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>17</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>18</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>19</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>20</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>21</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>22</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>23</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>24</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>25</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>26</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>27</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>28</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>29</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>30</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>31</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>32</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>33</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>34</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>35</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>36</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>37</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>38</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>39</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>40</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>41</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>42</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>43</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>44</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>45</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>46</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>47</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>48</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>49</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>40</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>50</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>51</design:position>
+        <design:nativeDataTypeCode>93</design:nativeDataTypeCode>
+        <design:precision>26</design:precision>
+        <design:scale>6</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>52</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>53</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>54</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>55</design:position>
+        <design:nativeDataTypeCode>-5</design:nativeDataTypeCode>
+        <design:precision>19</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>APPLICATIONSRECEIVED</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>11</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>APPLICATIONSRECEIVED</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>APPLICATIONSRECEIVED</design:label>
+            <design:formattingHints>
+              <design:displaySize>11</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>TOTAL</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>-127</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>TOTAL</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>TOTAL</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="RequiresInvestigationRecordCount" id="946">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">ERROR_COUNT</property>
+                    <text-property name="displayName">ERROR_COUNT</text-property>
+                    <text-property name="heading">ERROR_COUNT</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters">
+                <structure>
+                    <property name="name">p_Q29_7_ProcessName</property>
+                    <property name="paramName">ProcessNameProgAuth</property>
+                    <property name="dataType">string</property>
+                    <property name="position">1</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_7_FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="dataType">dateTime</property>
+                    <property name="position">2</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_7_ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="dataType">dateTime</property>
+                    <property name="position">3</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_7_ResolvedStatus</property>
+                    <property name="paramName">UnResolvedStatus</property>
+                    <property name="dataType">string</property>
+                    <property name="position">4</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_8_ProcessName</property>
+                    <property name="paramName">ProcessNameEvidBrkrRolBack</property>
+                    <property name="dataType">string</property>
+                    <property name="position">5</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_8_FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="dataType">dateTime</property>
+                    <property name="position">6</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_8_ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="dataType">dateTime</property>
+                    <property name="position">7</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_8_ResolvedStatus</property>
+                    <property name="paramName">UnResolvedStatus</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">1</property>
+                    <property name="position">8</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_9_ProcessName1</property>
+                    <property name="paramName">ProcessNameStrThrAuth</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">9</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_9_ProcessName2</property>
+                    <property name="paramName">ProcessNameProcIntApp</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                    <property name="position">10</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_9_FromDate</property>
+                    <property name="paramName">p_ReportFromDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">11</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_9_ToDate</property>
+                    <property name="paramName">p_ReportToDate</property>
+                    <property name="nativeName"></property>
+                    <property name="dataType">dateTime</property>
+                    <property name="nativeDataType">93</property>
+                    <property name="position">12</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+                <structure>
+                    <property name="name">p_Q29_9_ResolvedStatus</property>
+                    <property name="paramName">UnResolvedStatus</property>
+                    <property name="dataType">string</property>
+                    <property name="position">13</property>
+                    <property name="isInput">true</property>
+                    <property name="isOutput">false</property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">ERROR_COUNT</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <method name="beforeOpen"><![CDATA[
+]]></method>
+            <method name="beforeClose"><![CDATA[
+]]></method>
+            <property name="dataSource">CuramDB</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">ERROR_COUNT</property>
+                    <property name="nativeName">ERROR_COUNT</property>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[  SELECT 
+     sum(other.total) ERROR_COUNT
+  FROM
+    (
+    select 0 total from organisation
+    union all     
+    -- 29:Other : PROGRAMAUTHORIZATION
+    SELECT 
+       count(DPE.instdataid) total
+    FROM DPERRORINFORMATION DPE
+    WHERE DPE.processname     = ?
+    AND  DPE.invocationtime BETWEEN ?   AND ?
+    AND DPE.status = ?
+    UNION ALL
+    -- 29:Other : EVIDENCE_BROKER_ROLLBACK
+    SELECT 
+       count(DPE.instdataid) total
+    FROM DPERRORINFORMATION DPE
+    WHERE DPE.processname     = ?
+    AND DPE.invocationtime BETWEEN ?   AND ?
+    AND DPE.status = ?
+    UNION ALL
+    -- 29:Other  : StriaghtThroughAuthorise  and ProcessIntakeApplication   
+    SELECT 
+      count(FM.activityinstanceid) total
+    FROM PROCESSDEFINITION PD
+    LEFT OUTER JOIN PROCESSINSTANCE PI
+    ON PD.processid = PI.processid
+    LEFT OUTER JOIN FAILEDMESSAGE FM
+    ON PI.processinstanceid = FM.processinstanceid
+    WHERE PD.processname    IN (?,?) --specific to HCR
+    AND FM.LASTWRITTEN  BETWEEN ?   AND ?
+    AND fm.messagestatus = ?
+    ) OTHER
+
+
+
+
+
+]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:DataSetParameters>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>8</design:position>
+        <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+        <design:precision>120</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>9</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:precision>940</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+    <design:parameterDefinitions>
+      <design:inOutMode>In</design:inOutMode>
+      <design:attributes>
+        <design:name></design:name>
+        <design:position>10</design:position>
+        <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+        <design:precision>940</design:precision>
+        <design:scale>0</design:scale>
+        <design:nullability>Nullable</design:nullability>
+      </design:attributes>
+      <design:inputAttributes>
+        <design:elementAttributes>
+          <design:optional>true</design:optional>
+        </design:elementAttributes>
+      </design:inputAttributes>
+    </design:parameterDefinitions>
+  </design:DataSetParameters>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>APPLICATIONSRECEIVED</design:name>
+            <design:position>1</design:position>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>11</design:precision>
+            <design:scale>0</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>APPLICATIONSRECEIVED</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>APPLICATIONSRECEIVED</design:label>
+            <design:formattingHints>
+              <design:displaySize>11</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>TOTAL</design:name>
+            <design:position>2</design:position>
+            <design:nativeDataTypeCode>2</design:nativeDataTypeCode>
+            <design:precision>0</design:precision>
+            <design:scale>-127</design:scale>
+            <design:nullability>Nullable</design:nullability>
+            <design:uiHints>
+              <design:displayName>TOTAL</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>TOTAL</design:label>
+            <design:formattingHints>
+              <design:displaySize>22</design:displaySize>
+            </design:formattingHints>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="HCRAppTab" id="731">
+            <property name="borderBottomStyle">none</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="NoBorder" id="739"/>
+        <style name="NewStyle" id="770">
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+        </style>
+        <style name="NewStyle1" id="808"/>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">custom</property>
+            <property name="topMargin">0in</property>
+            <property name="leftMargin">0in</property>
+            <property name="bottomMargin">0in</property>
+            <property name="rightMargin">0in</property>
+            <property name="height">265px</property>
+            <property name="width">440px</property>
+            <property name="showHeaderOnFirst">false</property>
+            <property name="showFooterOnLast">false</property>
+            <property name="headerHeight">0in</property>
+            <property name="footerHeight">0in</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <data id="958">
+            <property name="fontSize">10px</property>
+            <property name="color">black</property>
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">RequiresInvestigationRecordCount</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">true</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ERROR_COUNT</property>
+                    <text-property name="displayName">ERROR_COUNT</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["ERROR_COUNT"]</expression>
+                    <property name="dataType">decimal</property>
+                </structure>
+            </list-property>
+            <method name="onCreate"><![CDATA[vars["InvReq_Total"] = this.getRowData().getColumnValue("ERROR_COUNT")]]></method>
+            <property name="resultSetColumn">ERROR_COUNT</property>
+        </data>
+        <grid id="890">
+            <property name="height">245px</property>
+            <property name="width">450px</property>
+            <column id="891">
+                <property name="width">4.09375in</property>
+            </column>
+            <row id="892">
+                <property name="height">30px</property>
+                <cell id="893">
+                    <property name="fontSize">2px</property>
+                    <property name="paddingTop">1px</property>
+                    <property name="paddingLeft">1px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">4px</property>
+                    <table name="tabular data" id="850">
+                        <property name="backgroundAttachment">scroll</property>
+                        <property name="backgroundImageType">url</property>
+                        <property name="backgroundPositionX">0%</property>
+                        <property name="backgroundPositionY">0%</property>
+                        <property name="backgroundRepeat">repeat</property>
+                        <property name="backgroundSizeHeight">auto</property>
+                        <property name="backgroundSizeWidth">auto</property>
+                        <property name="fontFamily">"Tahoma"</property>
+                        <property name="fontSize">10pt</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="fontVariant">normal</property>
+                        <property name="color">black</property>
+                        <property name="textLineThrough">none</property>
+                        <property name="textOverline">none</property>
+                        <property name="textUnderline">none</property>
+                        <property name="borderBottomColor">black</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderBottomWidth">medium</property>
+                        <property name="borderLeftColor">black</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderLeftWidth">medium</property>
+                        <property name="borderRightColor">black</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderRightWidth">medium</property>
+                        <property name="borderTopColor">black</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="borderTopWidth">medium</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">5px</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="marginRight">5px</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <property name="textIndent">0em</property>
+                        <property name="letterSpacing">normal</property>
+                        <property name="lineHeight">normal</property>
+                        <property name="orphans">2</property>
+                        <property name="textTransform">none</property>
+                        <property name="verticalAlign">middle</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="widows">2</property>
+                        <property name="wordSpacing">normal</property>
+                        <property name="display">block</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="pageBreakBefore">auto</property>
+                        <property name="pageBreakInside">auto</property>
+                        <property name="showIfBlank">false</property>
+                        <property name="canShrink">false</property>
+                        <property name="overflow">hidden</property>
+                        <property name="height">30px</property>
+                        <property name="width">436px</property>
+                        <property name="dataSet">ApplicationsReceivd</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">APPLICATIONSRECEIVED</property>
+                                <text-property name="displayName">InterventionRequired</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["BusinessProgramName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">TOTAL</property>
+                                <text-property name="displayName">TOTAL</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["TOTAL"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Aggregation</property>
+                                <text-property name="displayName">TOTAL</text-property>
+                                <property name="dataType">float</property>
+                                <property name="aggregateFunction">SUM</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">dataSetRow["TOTAL"]</expression>
+                                    </structure>
+                                </list-property>
+                            </structure>
+                            <structure>
+                                <property name="name">KPI</property>
+                                <text-property name="displayName">KPI</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["KPI"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CATEGORY</property>
+                                <text-property name="displayName">CATEGORY</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["CATEGORY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <structure name="toc"/>
+                        <column id="888">
+                            <property name="width">150px</property>
+                        </column>
+                        <column id="867">
+                            <property name="width">260px</property>
+                        </column>
+                        <footer>
+                            <row id="861">
+                                <property name="backgroundColor">white</property>
+                                <property name="verticalAlign">bottom</property>
+                                <property name="height">30px</property>
+                                <cell id="887">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundColor">#F1F5FD</property>
+                                    <property name="backgroundImageType">url</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="backgroundSizeHeight">auto</property>
+                                    <property name="backgroundSizeWidth">auto</property>
+                                    <property name="fontFamily">"Tahoma"</property>
+                                    <property name="fontSize">9pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">0px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">0px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="textIndent">0em</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="verticalAlign">bottom</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                </cell>
+                                <cell id="864">
+                                    <property name="backgroundAttachment">scroll</property>
+                                    <property name="backgroundColor">#F1F5FD</property>
+                                    <property name="backgroundImageType">url</property>
+                                    <property name="backgroundPositionX">0%</property>
+                                    <property name="backgroundPositionY">0%</property>
+                                    <property name="backgroundRepeat">repeat</property>
+                                    <property name="backgroundSizeHeight">auto</property>
+                                    <property name="backgroundSizeWidth">auto</property>
+                                    <property name="fontFamily">"Tahoma"</property>
+                                    <property name="fontSize">9pt</property>
+                                    <property name="fontWeight">normal</property>
+                                    <property name="fontStyle">normal</property>
+                                    <property name="fontVariant">normal</property>
+                                    <property name="color">black</property>
+                                    <property name="textLineThrough">none</property>
+                                    <property name="textOverline">none</property>
+                                    <property name="textUnderline">none</property>
+                                    <property name="borderBottomColor">black</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderBottomWidth">medium</property>
+                                    <property name="borderLeftColor">black</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderLeftWidth">medium</property>
+                                    <property name="borderRightColor">black</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderRightWidth">medium</property>
+                                    <property name="borderTopColor">black</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderTopWidth">medium</property>
+                                    <property name="marginTop">0pt</property>
+                                    <property name="marginLeft">0pt</property>
+                                    <property name="marginBottom">0pt</property>
+                                    <property name="marginRight">0pt</property>
+                                    <property name="paddingTop">0px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">0px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <property name="textAlign">right</property>
+                                    <property name="textIndent">0em</property>
+                                    <property name="letterSpacing">normal</property>
+                                    <property name="lineHeight">normal</property>
+                                    <property name="orphans">2</property>
+                                    <property name="textTransform">none</property>
+                                    <property name="verticalAlign">bottom</property>
+                                    <property name="whiteSpace">normal</property>
+                                    <property name="widows">2</property>
+                                    <property name="wordSpacing">normal</property>
+                                    <property name="display">block</property>
+                                    <property name="pageBreakAfter">auto</property>
+                                    <property name="pageBreakBefore">auto</property>
+                                    <property name="pageBreakInside">auto</property>
+                                    <property name="showIfBlank">false</property>
+                                    <property name="canShrink">false</property>
+                                    <property name="overflow">hidden</property>
+                                    <data id="865">
+                                        <property name="backgroundAttachment">scroll</property>
+                                        <property name="backgroundPositionX">0%</property>
+                                        <property name="backgroundPositionY">0%</property>
+                                        <property name="backgroundRepeat">repeat</property>
+                                        <property name="fontFamily">"Tahoma"</property>
+                                        <property name="fontSize">11px</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="fontStyle">normal</property>
+                                        <property name="fontVariant">normal</property>
+                                        <property name="color">black</property>
+                                        <property name="textLineThrough">none</property>
+                                        <property name="textOverline">none</property>
+                                        <property name="textUnderline">none</property>
+                                        <property name="borderBottomColor">black</property>
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderBottomWidth">medium</property>
+                                        <property name="borderLeftColor">black</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderLeftWidth">medium</property>
+                                        <property name="borderRightColor">black</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderRightWidth">medium</property>
+                                        <property name="borderTopColor">black</property>
+                                        <property name="borderTopStyle">none</property>
+                                        <property name="borderTopWidth">medium</property>
+                                        <property name="marginTop">10px</property>
+                                        <property name="marginLeft">0px</property>
+                                        <property name="marginBottom">0px</property>
+                                        <property name="marginRight">8px</property>
+                                        <property name="paddingTop">0px</property>
+                                        <property name="paddingLeft">0px</property>
+                                        <property name="paddingBottom">0px</property>
+                                        <property name="paddingRight">0px</property>
+                                        <structure name="numberFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">Total: ###,##0</property>
+                                        </structure>
+                                        <structure name="stringFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">Total #0,000,00</property>
+                                        </structure>
+                                        <property name="textAlign">right</property>
+                                        <property name="letterSpacing">normal</property>
+                                        <property name="lineHeight">normal</property>
+                                        <property name="orphans">2</property>
+                                        <property name="textTransform">none</property>
+                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="widows">2</property>
+                                        <property name="wordSpacing">normal</property>
+                                        <property name="display">block</property>
+                                        <property name="pageBreakAfter">auto</property>
+                                        <property name="pageBreakBefore">auto</property>
+                                        <property name="pageBreakInside">auto</property>
+                                        <property name="showIfBlank">false</property>
+                                        <property name="canShrink">false</property>
+                                        <property name="overflow">hidden</property>
+                                        <property name="resultSetColumn">Aggregation</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+            <row id="894">
+                <property name="height">1.6354166666666667in</property>
+                <cell id="895">
+                    <property name="fontSize">1pt</property>
+                    <property name="paddingTop">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">1px</property>
+                    <property name="textAlign">left</property>
+                    <table name="tabular data1" id="868">
+                        <property name="fontFamily">"Tahoma"</property>
+                        <property name="fontSize">9pt</property>
+                        <property name="marginTop">15px</property>
+                        <property name="marginLeft">5px</property>
+                        <property name="marginBottom">5pt</property>
+                        <property name="marginRight">5px</property>
+                        <property name="verticalAlign">middle</property>
+                        <property name="width">436px</property>
+                        <property name="dataSet">ApplicationsReceivd</property>
+                        <list-property name="boundDataColumns">
+                            <structure>
+                                <property name="name">APPLICATIONSRECEIVED</property>
+                                <text-property name="displayName">InterventionRequired</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["BusinessProgramName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">TOTAL</property>
+                                <text-property name="displayName">TOTAL</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["TOTAL"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">Aggregation</property>
+                                <text-property name="displayName">TOTAL</text-property>
+                                <property name="dataType">float</property>
+                                <property name="aggregateFunction">SUM</property>
+                                <list-property name="arguments">
+                                    <structure>
+                                        <property name="name">Expression</property>
+                                        <expression name="value" type="javascript">dataSetRow["TOTAL"]</expression>
+                                    </structure>
+                                </list-property>
+                            </structure>
+                            <structure>
+                                <property name="name">KPI</property>
+                                <text-property name="displayName">KPI</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["KPI"]</expression>
+                                <property name="dataType">decimal</property>
+                            </structure>
+                            <structure>
+                                <property name="name">CATEGORY</property>
+                                <text-property name="displayName">CATEGORY</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["CATEGORY"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                        </list-property>
+                        <structure name="toc"/>
+                        <column id="884">
+                            <property name="width">3.375in</property>
+                        </column>
+                        <column id="885">
+                            <property name="verticalAlign">middle</property>
+                            <property name="width">1.1354166666666667in</property>
+                        </column>
+                        <header>
+                            <row id="869">
+                                <property name="backgroundColor">#FEE2A0</property>
+                                <property name="fontSize">11px</property>
+                                <property name="textAlign">left</property>
+                                <property name="height">22px</property>
+                                <cell id="870">
+                                    <property name="fontSize">11px</property>
+                                    <property name="borderBottomColor">#FABA4D</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#FABA4D</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightColor">#FABA4D</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#FABA4D</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">1px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">1px</property>
+                                    <property name="paddingRight">1px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <label id="871">
+                                        <property name="fontFamily">"Tahoma"</property>
+                                        <property name="fontSize">11px</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="marginTop">1pt</property>
+                                        <property name="marginLeft">10px</property>
+                                        <property name="marginBottom">1px</property>
+                                        <property name="marginRight">10px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">1px</property>
+                                        <property name="paddingBottom">1px</property>
+                                        <property name="paddingRight">1px</property>
+                                        <property name="display">block</property>
+                                        <text-property name="text">Intervention Required</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="872">
+                                    <property name="fontSize">11px</property>
+                                    <property name="borderBottomColor">#FABA4D</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderRightColor">#FABA4D</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopColor">#FABA4D</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <property name="paddingTop">1px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">1px</property>
+                                    <property name="paddingRight">1px</property>
+                                    <property name="textAlign">left</property>
+                                    <label id="873">
+                                        <property name="fontFamily">"Tahoma"</property>
+                                        <property name="fontSize">11px</property>
+                                        <property name="fontWeight">bold</property>
+                                        <property name="marginTop">1pt</property>
+                                        <property name="marginLeft">10px</property>
+                                        <property name="marginBottom">1px</property>
+                                        <property name="marginRight">10px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">1px</property>
+                                        <property name="paddingBottom">1px</property>
+                                        <property name="paddingRight">1px</property>
+                                        <property name="textAlign">left</property>
+                                        <property name="display">block</property>
+                                        <text-property name="text" key="Report.tab.row2.title">Total</text-property>
+                                    </label>
+                                </cell>
+                            </row>
+                        </header>
+                        <detail>
+                            <row id="874">
+                                <method name="onRender"><![CDATA[if (i==0) {
+  this.getStyle().backgroundColor = "white";
+  i = 1;
+} else {
+ this.getStyle().backgroundColor = '#e6ecf4';
+ i = 0;
+}]]></method>
+                                <property name="fontSize">11px</property>
+                                <property name="borderBottomColor">#CDD9E7</property>
+                                <property name="borderBottomStyle">solid</property>
+                                <property name="borderBottomWidth">thin</property>
+                                <property name="textAlign">center</property>
+                                <property name="height">22px</property>
+                                <cell id="875">
+                                    <property name="fontSize">11px</property>
+                                    <property name="borderBottomColor">#CDD9E7</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftColor">#B6B6B6</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="paddingTop">1px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">1px</property>
+                                    <property name="paddingRight">1px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="876">
+                                        <property name="fontSize">11px</property>
+                                        <property name="marginTop">1px</property>
+                                        <property name="marginLeft">10px</property>
+                                        <property name="marginBottom">1px</property>
+                                        <property name="marginRight">10px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">1px</property>
+                                        <property name="paddingBottom">1px</property>
+                                        <property name="paddingRight">1px</property>
+                                        <property name="textAlign">left</property>
+                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="resultSetColumn">APPLICATIONSRECEIVED</property>
+                                    </data>
+                                </cell>
+                                <cell id="877">
+                                    <property name="fontFamily">"Tahoma"</property>
+                                    <property name="fontSize">11px</property>
+                                    <property name="borderBottomColor">#CDD9E7</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderRightColor">#B6B6B6</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="paddingTop">1px</property>
+                                    <property name="paddingLeft">0px</property>
+                                    <property name="paddingBottom">1px</property>
+                                    <property name="paddingRight">1px</property>
+                                    <property name="verticalAlign">middle</property>
+                                    <data id="878">
+                                        <property name="fontSize">11px</property>
+                                        <property name="marginTop">1px</property>
+                                        <property name="marginLeft">10px</property>
+                                        <property name="marginBottom">1px</property>
+                                        <property name="marginRight">10px</property>
+                                        <property name="paddingTop">3px</property>
+                                        <property name="paddingLeft">1px</property>
+                                        <property name="paddingBottom">1px</property>
+                                        <property name="paddingRight">1px</property>
+                                        <structure name="numberFormat">
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">###,##0</property>
+                                        </structure>
+                                        <property name="textAlign">left</property>
+                                        <property name="whiteSpace">nowrap</property>
+                                        <property name="resultSetColumn">TOTAL</property>
+                                    </data>
+                                </cell>
+                            </row>
+                        </detail>
+                        <footer>
+                            <row id="989">
+                                <property name="borderTopColor">#CDD9E7</property>
+                                <property name="borderTopStyle">solid</property>
+                                <property name="borderTopWidth">thin</property>
+                                <cell id="990">
+                                    <property name="borderTopColor">#B6B6B6</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                </cell>
+                                <cell id="991">
+                                    <property name="borderTopColor">#B6B6B6</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                </cell>
+                            </row>
+                        </footer>
+                    </table>
+                </cell>
+            </row>
+            <row id="978">
+                <cell id="979">
+                    <property name="backgroundAttachment">scroll</property>
+                    <property name="backgroundImageType">url</property>
+                    <property name="backgroundPositionX">0%</property>
+                    <property name="backgroundPositionY">0%</property>
+                    <property name="backgroundRepeat">repeat</property>
+                    <property name="backgroundSizeHeight">auto</property>
+                    <property name="backgroundSizeWidth">auto</property>
+                    <property name="fontFamily">sans-serif</property>
+                    <property name="fontSize">1pt</property>
+                    <property name="fontWeight">normal</property>
+                    <property name="fontStyle">normal</property>
+                    <property name="fontVariant">normal</property>
+                    <property name="color">black</property>
+                    <property name="textLineThrough">none</property>
+                    <property name="textOverline">none</property>
+                    <property name="textUnderline">none</property>
+                    <property name="borderBottomColor">black</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderBottomWidth">medium</property>
+                    <property name="borderLeftColor">black</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderLeftWidth">medium</property>
+                    <property name="borderRightColor">black</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderRightWidth">medium</property>
+                    <property name="borderTopColor">black</property>
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderTopWidth">medium</property>
+                    <property name="marginTop">0pt</property>
+                    <property name="marginLeft">0pt</property>
+                    <property name="marginBottom">0pt</property>
+                    <property name="marginRight">0pt</property>
+                    <property name="paddingTop">5px</property>
+                    <property name="paddingLeft">0px</property>
+                    <property name="paddingBottom">0px</property>
+                    <property name="paddingRight">0px</property>
+                    <property name="textAlign">left</property>
+                    <property name="textIndent">0em</property>
+                    <property name="letterSpacing">normal</property>
+                    <property name="lineHeight">normal</property>
+                    <property name="orphans">2</property>
+                    <property name="textTransform">none</property>
+                    <property name="whiteSpace">normal</property>
+                    <property name="widows">2</property>
+                    <property name="wordSpacing">normal</property>
+                    <property name="display">block</property>
+                    <property name="pageBreakAfter">auto</property>
+                    <property name="pageBreakBefore">auto</property>
+                    <property name="pageBreakInside">auto</property>
+                    <property name="showIfBlank">false</property>
+                    <property name="canShrink">false</property>
+                    <property name="overflow">hidden</property>
+                    <grid id="980">
+                        <property name="marginLeft">5px</property>
+                        <property name="marginRight">5px</property>
+                        <property name="height">0.4375in</property>
+                        <property name="width">436px</property>
+                        <column id="981">
+                            <property name="width">4.552083333333333in</property>
+                        </column>
+                        <row id="982">
+                            <property name="height">0.4375in</property>
+                            <cell id="983">
+                                <property name="paddingTop">0px</property>
+                                <property name="paddingLeft">0px</property>
+                                <property name="paddingRight">7px</property>
+                                <label id="977">
+                                    <property name="backgroundColor">#F1F5FD</property>
+                                    <property name="fontFamily">"Tahoma"</property>
+                                    <property name="fontSize">11px</property>
+                                    <property name="color">#333333</property>
+                                    <property name="borderBottomColor">#DCDCDC</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftColor">#DCDCDC</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#DCDCDC</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopColor">#DCDCDC</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <property name="marginTop">0px</property>
+                                    <property name="marginLeft">0px</property>
+                                    <property name="marginBottom">0px</property>
+                                    <property name="marginRight">0px</property>
+                                    <property name="paddingTop">0px</property>
+                                    <property name="paddingLeft">10px</property>
+                                    <property name="paddingBottom">0px</property>
+                                    <property name="paddingRight">0px</property>
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">vars["InvReq_Total"]==0</expression>
+                                        </structure>
+                                    </list-property>
+                                    <text-property name="text" key="requires.investigation.message"></text-property>
+                                </label>
+                            </cell>
+                        </row>
+                    </grid>
+                </cell>
+            </row>
+        </grid>
+    </body>
+    <property name="pageVariables">
+        <variable-element name="InvReq_Total">
+            <expression name="value" type="javascript">0</expression>
+            <property name="type">report</property>
+        </variable-element>
+    </property>
+</report>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="comments">Copyright IBM Corporation 2015. All Rights Reserved.&#13;
+US Government Users Restricted Rights - Use, duplication or disclosure  restricted by GSA ADP Schedule Contract with IBM Corp.&#13;&#13;
+&#13;&#13;
+This is the data source used to connect to a warm instance of the Curam Application Database.</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.1.v201408290142 Build &lt;4.4.1.v20140916-1320></property>
+    <property name="units">in</property>
+    <property name="theme">defaultTheme</property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="CuramWarmDB" id="9">
+            <property name="comments">This is the data source used to connect to a warm instance of the Curam Application Database. &#13;
+&#13;
+Some reports may use the CuramWarmDB data source.  The Curam Development environment creates and manages this data source during its lifecycle from development to deployment through runtime execution. &#13;
+On application servers the JNDI is java:comp/env/jdbc/curamdbwarm</property>
+            <property name="eventHandlerClass">curam.util.mtd.CuramWarmDataSourceEventHandler</property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@server:port:sid</property>
+            <property name="odaUser">curam</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">cA==</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/curamdb</property>
+        </oda-data-source>
+    </data-sources>
+    <themes>
+        <theme name="defaultTheme" id="4"/>
+    </themes>
+    <page-setup>
+        <simple-master-page name="NotForUse" id="3"/>
+    </page-setup>
+</library>

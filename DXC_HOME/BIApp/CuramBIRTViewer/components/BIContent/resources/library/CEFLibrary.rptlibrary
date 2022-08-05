@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.1.v201408290142 Build &lt;4.4.1.v20140916-1320></property>
+    <html-property name="description">Curam Library.</html-property>
+    <property name="units">in</property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="CuramDB" id="9">
+            <property name="comments">This is the standard data source used to connect to the Curam Application Database. &#13;
+&#13;
+All reports must use the CuramDB data source.  The Curam Development environment creates and manages this data source during its lifecycle from development to deployment through runtime execution. On app servers the JNDI java:comp/env/jdbc/curamdb is used.</property>
+            <property name="eventHandlerClass">biapp.CuramDataSourceEventHandler</property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@server:port:sid</property>
+            <property name="odaUser">curam</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">cA==</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/curamdb</property>
+        </oda-data-source>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="CuramDM" id="12">
+            <property name="comments">This is the standard data source used to connect to the Curam Application Database. &#13;
+&#13;
+All reports must use the CuramDB data source.  The Curam Development environment creates and manages this data source during its lifecycle from development to deployment through runtime execution. On app servers the JNDI java:comp/env/jdbc/curamdm is used.</property>
+            <property name="eventHandlerClass">biapp.CuramDMDataSourceEventHandler</property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">oracle.jdbc.OracleDriver</property>
+            <property name="odaURL">jdbc:oracle:thin:@qareporting:1521:qareporting</property>
+            <property name="odaUser">curamdmo</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">cA==</encrypted-property>
+            <property name="odaJndiName">java:comp/env/jdbc/curamdm</property>
+        </oda-data-source>
+    </data-sources>
+    <page-setup>
+        <simple-master-page name="CuramAnalyticMasterPage" id="3">
+            <property name="type">custom</property>
+            <property name="topMargin">0in</property>
+            <property name="leftMargin">0in</property>
+            <property name="bottomMargin">0in</property>
+            <property name="rightMargin">0in</property>
+            <property name="height">600px</property>
+            <property name="width">600px</property>
+            <property name="headerHeight">0in</property>
+            <property name="footerHeight">0in</property>
+        </simple-master-page>
+    </page-setup>
+</library>
